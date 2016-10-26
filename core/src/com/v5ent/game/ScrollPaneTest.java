@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -62,27 +63,20 @@ public class ScrollPaneTest extends Game  {
         table.pad(10).defaults().expandX().space(4);  
         for (int i = 0; i < 100; i++) {  
             table.row();  
-            table.add(new Label(i + "uno", skin)).expandX().fillX();  
+            final CheckBox checkBox = new CheckBox("CheckBox", skin);
+            checkBox.addListener(new ChangeListener() {
+
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    if (checkBox.isChecked()) {
+                        Gdx.app.log("TAG", "box is checked");
+                    } else {
+                        Gdx.app.log("TAG", "box is unchecked");
+                    }
+                }
+            });
+            table.add(checkBox).expandX().fillX();  
   
-            /** 
-             * 往table中添加TextButton 
-             */  
-//          TextButton button = new TextButton(i + "dos", skin);//创建一个TextButton  
-//          table.add(button);  
-//          button.addListener(new ClickListener() {//给TextButton添加点击事件  
-//              public void clicked (InputEvent event, float x, float y) {  
-//                  System.out.println("click " + x + ", " + y);  
-//              }  
-//          });  
-  
-            /** 
-             * 这个音量条(类似)里面添加进度条 
-             */  
-//          Slider slider = new Slider(0, 100, 1, false, skin);  
-//          slider.addListener(stopTouchDown); // Stops touchDown events from propagating to the FlickScrollPane.  
-//          table.add(slider);  
-//  
-//          table.add(new Label(i + "tres long0 long1 long2 long3 long4 long5 long6 long7 long8 long9 long10 long11 long12", skin));  
             table.add(new Label(i + "tres long0 long1 ", skin));  
         }  
   
