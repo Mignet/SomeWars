@@ -7,7 +7,17 @@ import com.badlogic.gdx.math.Vector2;
 /**
  */
 public class Starship extends Sprite {
-    Vector2 previousPosition;
+	String id;
+	
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	Vector2 previousPosition;
     public Starship(Texture texture){
         super(texture);
         previousPosition = new Vector2(getX(), getY());
