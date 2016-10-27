@@ -1,4 +1,4 @@
-package com.v5ent.game.screens;
+/*package com.v5ent.game.screens;
 import com.badlogic.gdx.graphics.Color;  
 import com.badlogic.gdx.scenes.scene2d.Actor;  
 import com.badlogic.gdx.scenes.scene2d.InputEvent;  
@@ -10,10 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;  
 import com.badlogic.gdx.scenes.scene2d.ui.Table;  
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;  
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;  
-import com.swallowgames.supermario.game.Assets;  
-import com.swallowgames.supermario.screen.MainScreen;  
-import com.swallowgames.supermario.utils.Utils;  
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.v5ent.game.utils.Assets;  
+//import com.swallowgames.supermario.game.Assets;  
+//import com.swallowgames.supermario.screen.MainScreen;  
+//import com.swallowgames.supermario.utils.Utils;  
   
 public class ThemeScrollPanel extends ScrollPane{  
   
@@ -109,3 +110,4 @@ public class ThemeScrollPanel extends ScrollPane{
         }  
     }  
 }  
+*/

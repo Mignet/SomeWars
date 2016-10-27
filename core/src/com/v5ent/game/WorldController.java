@@ -9,6 +9,12 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.v5ent.game.objects.BunnyHead;
 import com.v5ent.game.objects.BunnyHead.JUMP_STATE;
@@ -46,7 +52,7 @@ public class WorldController extends InputAdapter implements Disposable {
 
 	private float timeLeftGameOverDelay;
 
-//	public World b2world;
+	public World b2world;
 
 	public WorldController (DirectedGame game) {
 		this.game = game;
@@ -68,10 +74,10 @@ public class WorldController extends InputAdapter implements Disposable {
 		goalReached = false;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.bunnyHead);
-//		initPhysics();
+		initPhysics();
 	}
 
-	/*private void initPhysics () {
+	private void initPhysics () {
 		if (b2world != null) b2world.dispose();
 		b2world = new World(new Vector2(0, -9.81f), true);
 		// Rocks
@@ -91,7 +97,7 @@ public class WorldController extends InputAdapter implements Disposable {
 			body.createFixture(fixtureDef);
 			polygonShape.dispose();
 		}
-	}*/
+	}
 
 	public void update (float deltaTime) {
 		handleDebugInput(deltaTime);
@@ -103,7 +109,7 @@ public class WorldController extends InputAdapter implements Disposable {
 		}
 		level.update(deltaTime);
 		testCollisions();
-//		b2world.step(deltaTime, 8, 3);
+		b2world.step(deltaTime, 8, 3);
 		cameraHelper.update(deltaTime);
 		if (!isGameOver() && isPlayerInWater()) {
 			AudioManager.instance.play(Assets.instance.sounds.liveLost);
@@ -309,7 +315,7 @@ public class WorldController extends InputAdapter implements Disposable {
 
 	@Override
 	public void dispose () {
-//		if (b2world != null) b2world.dispose();
+		if (b2world != null) b2world.dispose();
 	}
 
 	private void spawnCarrots (Vector2 pos, int numCarrots, float radius) {
@@ -325,17 +331,17 @@ public class WorldController extends InputAdapter implements Disposable {
 			carrot.scale.set(carrotScale, carrotScale);
 			// create box2d body for carrot with start position
 			// and angle of rotation
-/*			BodyDef bodyDef = new BodyDef();
+			BodyDef bodyDef = new BodyDef();
 			bodyDef.position.set(pos);
 			bodyDef.position.add(x, y);
-			bodyDef.angle = rotation;*/
-//			Body body = b2world.createBody(bodyDef);
-//			body.setType(BodyType.DynamicBody);
-//			carrot.body = body;
+			bodyDef.angle = rotation;
+			Body body = b2world.createBody(bodyDef);
+			body.setType(BodyType.DynamicBody);
+			carrot.body = body;
 			
 			// create rectangular shape for carrot to allow
 			// interactions (collisions) with other objects
-			/*PolygonShape polygonShape = new PolygonShape();
+			PolygonShape polygonShape = new PolygonShape();
 			float halfWidth = carrot.bounds.width / 2.0f * carrotScale;
 			float halfHeight = carrot.bounds.height / 2.0f * carrotScale;
 			polygonShape.setAsBox(halfWidth * carrotShapeScale, halfHeight * carrotShapeScale);
@@ -346,7 +352,7 @@ public class WorldController extends InputAdapter implements Disposable {
 			fixtureDef.restitution = 0.5f;
 			fixtureDef.friction = 0.5f;
 			body.createFixture(fixtureDef);
-			polygonShape.dispose();*/
+			polygonShape.dispose();
 			// finally, add new carrot to list for updating/rendering
 			level.carrots.add(carrot);
 		}

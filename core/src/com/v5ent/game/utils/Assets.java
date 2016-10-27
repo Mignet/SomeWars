@@ -32,6 +32,8 @@ public class Assets implements Disposable, AssetErrorListener {
 	public AssetSounds sounds;
 	public AssetMusic music;
 
+//	public Object assetUI;
+
 	// singleton: prevent instantiation from other classes
 	private Assets () {
 	}

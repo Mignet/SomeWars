@@ -4,6 +4,7 @@ package com.v5ent.game.objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.v5ent.game.utils.Assets;
 
 public class Rock extends GameObject {
@@ -17,6 +18,7 @@ public class Rock extends GameObject {
 	private final float FLOAT_AMPLITUDE = 0.25f;
 	private float floatCycleTimeLeft;
 	private boolean floatingDownwards;
+	public Body body;
 
 	public Rock () {
 		init();
@@ -53,9 +55,9 @@ public class Rock extends GameObject {
 		if (floatCycleTimeLeft <= 0) {
 			floatCycleTimeLeft = FLOAT_CYCLE_TIME;
 			floatingDownwards = !floatingDownwards;
-//			body.setLinearVelocity(0, FLOAT_AMPLITUDE * (floatingDownwards ? -1 : 1));
+			body.setLinearVelocity(0, FLOAT_AMPLITUDE * (floatingDownwards ? -1 : 1));
 		} else {
-//			body.setLinearVelocity(body.getLinearVelocity().mul(0.98f));
+			body.setLinearVelocity(body.getLinearVelocity().scl(0.98f));
 		}
 	}
 

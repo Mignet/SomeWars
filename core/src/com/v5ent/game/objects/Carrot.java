@@ -3,11 +3,13 @@ package com.v5ent.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.v5ent.game.utils.Assets;
 
 public class Carrot extends GameObject {
 
 	private TextureRegion regCarrot;
+	public Body body;
 
 	public Carrot () {
 		init();

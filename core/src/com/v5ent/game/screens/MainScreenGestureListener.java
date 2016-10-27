@@ -1,4 +1,4 @@
-package com.v5ent.game.screens;
+/*package com.v5ent.game.screens;
 
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;  
 
@@ -51,3 +51,4 @@ public class MainScreenGestureListener extends GestureAdapter{
         }  
     }  
 } 
+*/
