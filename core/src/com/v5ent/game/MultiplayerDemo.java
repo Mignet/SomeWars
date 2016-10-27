@@ -1,26 +1,26 @@
 package com.v5ent.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.JSONObject;
-
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Json;
-import com.v5ent.game.sprites.Starship;
-
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import com.v5ent.game.sprites.Starship;
+//import org.json.JSONArray;
+//import org.json.JSONException;
+//import org.json.JSONObject;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.Game;
 
 public class MultiplayerDemo extends Game {
 	SpriteBatch batch;
@@ -98,13 +98,13 @@ public class MultiplayerDemo extends Game {
 		}).on("socketID", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				String id = (String) args[0];
+				String id =((org.json.JSONObject)(args[0])).getString("id");
 				Gdx.app.log("SocketIO", "My ID: " + id);
 			}
 		}).on("newPlayer", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				String id = (String) args[0];
+				String id =((org.json.JSONObject)(args[0])).getString("id");
 				try {
 					Gdx.app.log("SocketIO", "New Player Connect: " + id);
 					friendlyPlayers.put(id, new Starship(friendlyShip));
@@ -115,7 +115,7 @@ public class MultiplayerDemo extends Game {
 		}).on("playerDisconnected", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				String id = (String) args[0];
+				String id =((org.json.JSONObject)(args[0])).getString("id");
 				try {
 					friendlyPlayers.remove(id);
 				}catch(Exception e){
@@ -125,19 +125,19 @@ public class MultiplayerDemo extends Game {
 		}).on("getPlayers", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				List<String> objects = json.fromJson(ArrayList.class, args[0].toString());
+				JSONArray objects = (JSONArray) args[0];
 				try {
-					for(int i = 0; i < objects.size(); i++){
+					for(int i = 0; i < objects.length(); i++){
 						Starship coopPlayer = new Starship(friendlyShip);
 						Vector2 position = new Vector2();
-						position.x = json.fromJson(Starship.class, objects.get(i)).getX();//((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
-						position.y = json.fromJson(Starship.class, objects.get(i)).getY();//((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
+						position.x = ((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
+						position.y = ((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
 						coopPlayer.setPosition(position.x, position.y);
 
-						friendlyPlayers.put(json.fromJson(Starship.class, objects.get(i)).getId(), coopPlayer);
+						friendlyPlayers.put(objects.getJSONObject(i).getString("id"), coopPlayer);
 					}
-				} catch(Exception e){
-					Gdx.app.log("SocketIO", " json error:"+e.getMessage());
+				} catch(JSONException e){
+
 				}
 			}
 		});
