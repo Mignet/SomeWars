@@ -18,9 +18,9 @@
 package com.v5ent.game.utils;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.v5ent.game.objects.GameObject;
 
 public class CameraHelper {
 
@@ -28,11 +28,10 @@ public class CameraHelper {
 
 	private final float MAX_ZOOM_IN = 0.25f;
 	private final float MAX_ZOOM_OUT = 10.0f;
-	private final float FOLLOW_SPEED = 4.0f;
 
 	private Vector2 position;
 	private float zoom;
-	private GameObject target;
+	private Sprite target;
 
 	public CameraHelper () {
 		position = new Vector2();
@@ -42,10 +41,8 @@ public class CameraHelper {
 	public void update (float deltaTime) {
 		if (!hasTarget()) return;
 
-		position.lerp(target.position, FOLLOW_SPEED * deltaTime);
-		
-		// Prevent camera from moving down too far
-		position.y = Math.max(-1f, position.y);
+		position.x = target.getX() + target.getOriginX();
+		position.y = target.getY() + target.getOriginY();
 	}
 
 	public void setPosition (float x, float y) {
@@ -68,11 +65,11 @@ public class CameraHelper {
 		return zoom;
 	}
 
-	public void setTarget (GameObject target) {
+	public void setTarget (Sprite target) {
 		this.target = target;
 	}
 
-	public GameObject getTarget () {
+	public Sprite getTarget () {
 		return target;
 	}
 
@@ -80,7 +77,7 @@ public class CameraHelper {
 		return target != null;
 	}
 
-	public boolean hasTarget (GameObject target) {
+	public boolean hasTarget (Sprite target) {
 		return hasTarget() && this.target.equals(target);
 	}
 
