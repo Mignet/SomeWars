@@ -68,13 +68,14 @@ public class WorldController extends InputAdapter {
 		for (int i = 0; i < testSprites.length; i++) {
 			Sprite spr = new Sprite(regions.get(i));
 			// Define sprite size to be 1m x 1m in game world
-			spr.setSize(1, 1);
+			spr.setSize(spr.getWidth()/80, spr.getHeight()/80);
 			// Set origin to sprite's center
-			spr.setOrigin(spr.getWidth() / 2.0f, spr.getHeight() / 2.0f);
+			spr.setOrigin(spr.getWidth() / 2.0f, 0);
 			// Calculate random position for sprite
-			float randomX = MathUtils.random(-2.0f, 2.0f);
-			float randomY = MathUtils.random(-2.0f, 2.0f);
-			spr.setPosition(randomX, randomY);
+//			float randomX = MathUtils.random(-5.0f, 5.0f);
+//			float randomY = MathUtils.random(-3.0f, 3.0f);
+//			spr.setPosition(randomX, randomY);
+			spr.setPosition(-(i)-.5f, -.5f);
 			// Put new sprite into array
 			testSprites[i] = spr;
 		}
@@ -84,7 +85,7 @@ public class WorldController extends InputAdapter {
 
 	public void update (float deltaTime) {
 		handleDebugInput(deltaTime);
-		updateTestObjects(deltaTime);
+//		updateTestObjects(deltaTime);
 		cameraHelper.update(deltaTime);
 	}
 
