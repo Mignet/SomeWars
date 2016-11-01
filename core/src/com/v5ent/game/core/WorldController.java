@@ -163,4 +163,30 @@ public class WorldController extends InputAdapter {
 		}
 		return false;
 	}
+	
+	 @Override
+	    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+	       /* if(pointer < 5){
+	            touches.get(pointer).touchX = screenX;
+	            touches.get(pointer).touchY = screenY;
+	            touches.get(pointer).touched = true;
+	        }*/
+	        return true;
+	    }
+
+	    @Override
+	    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+	        /*if(pointer < 5){
+	            touches.get(pointer).touchX = 0;
+	            touches.get(pointer).touchY = 0;
+	            touches.get(pointer).touched = false;
+	        }*/
+	        return true;
+	    }
+
+	    @Override
+	    public boolean touchDragged(int screenX, int screenY, int pointer) {
+	        // TODO Auto-generated method stub
+	        return false;
+	    }
 }
