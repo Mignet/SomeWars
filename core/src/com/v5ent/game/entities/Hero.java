@@ -7,6 +7,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.v5ent.game.utils.Constants;
+import com.v5ent.game.utils.InputTransform;
 
 public class Hero extends Sprite implements InputProcessor{
 	private static final String TAG = Hero.class.getSimpleName();
@@ -30,6 +32,8 @@ public class Hero extends Sprite implements InputProcessor{
 	
 	private int mapX;
 	private int mapY;
+	
+	private boolean selected;
 	
 	public Hero(AtlasRegion stand) {
 		super(stand);
@@ -101,17 +105,20 @@ public class Hero extends Sprite implements InputProcessor{
 	}
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		float pointerX = InputTransform.getCursorToModelX(windowWidth, screenX);
-	      float pointerY = InputTransform.getCursorToModelY(windowHeight, screenY);
-	      for(int i = 0; i < balloons.size(); i++)
-	      {
-	          if(balloons.get(i).contains(pointerX, pointerY))
+		float pointerX = InputTransform.getCursorToModelX(Gdx.graphics.getWidth(), screenX);
+	      float pointerY = InputTransform.getCursorToModelY(Gdx.graphics.getHeight(), screenY);
+	          if(this.getBoundingRectangle().contains(pointerX, pointerY))
 	          {
-	              balloons.get(i).setSelected(true);
+	              this.setSelected(true);
 	          }
-	      }
-	      return true;
+//	      return true;
 		return false;
+	}
+	private void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	public boolean isSelected() {
+		return selected;
 	}
 	@Override
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
@@ -123,4 +130,5 @@ public class Hero extends Sprite implements InputProcessor{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
 }
