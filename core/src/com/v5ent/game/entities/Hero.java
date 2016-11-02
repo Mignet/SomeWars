@@ -34,8 +34,9 @@ public class Hero{
 	public final int FRAME_WIDTH = 16;
 	public final int FRAME_HEIGHT = 16;
 
+	/**待机、行走、施法、攻击、被打、死亡*/
 	public enum State {
-		IDLE, WALKING,FIGHT,BEATEN,DEAD
+		IDLE, WALKING,MAGIC,FIGHT,BEATEN,DEAD
 	}
 
 	public enum Direction {
