@@ -9,7 +9,6 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.v5ent.game.sprites.Starship;
 //import org.json.JSONArray;
 //import org.json.JSONException;
 //import org.json.JSONObject;
@@ -18,6 +17,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Json;
+import com.v5ent.game.entities.Starship;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Game;

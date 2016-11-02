@@ -17,6 +17,9 @@
 
 package com.v5ent.game.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
@@ -38,59 +41,17 @@ public class Assets implements Disposable, AssetErrorListener {
 
 	public Texture background;
 	
-	public Hero1 bunny1;
-	public Hero2 bunny2;
-	public Hero3 bunny3;
-	public Hero4 bunny4;
-	public Hero5 bunny5;
-	public Hero6 bunny6;
+	public Map<String,AssetHero> assetHeros = new HashMap<String, AssetHero>();
 
 	// singleton: prevent instantiation from other classes
 	private Assets () {
 	}
 
-	public class Hero1 {
-		public final AtlasRegion head;
-		public final AtlasRegion body;
+	public class AssetHero {
+		public final AtlasRegion stand;
 
-		public Hero1 (TextureAtlas atlas) {
-			head = atlas.findRegion("1");
-			body = atlas.findRegion("1");
-		}
-	}
-	public class Hero2 {
-		public final AtlasRegion stand;
-		
-		public Hero2 (TextureAtlas atlas) {
-			stand = atlas.findRegion("2");
-		}
-	}
-	public class Hero3 {
-		public final AtlasRegion stand;
-		
-		public Hero3 (TextureAtlas atlas) {
-			stand = atlas.findRegion("3");
-		}
-	}
-	public class Hero4 {
-		public final AtlasRegion stand;
-		
-		public Hero4 (TextureAtlas atlas) {
-			stand = atlas.findRegion("4");
-		}
-	}
-	public class Hero5 {
-		public final AtlasRegion stand;
-		
-		public Hero5 (TextureAtlas atlas) {
-			stand = atlas.findRegion("5");
-		}
-	}
-	public class Hero6 {
-		public final AtlasRegion stand;
-		
-		public Hero6 (TextureAtlas atlas) {
-			stand = atlas.findRegion("6");
+		public AssetHero (TextureAtlas atlas, String id) {
+			stand = atlas.findRegion(id);
 		}
 	}
 
@@ -118,12 +79,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		}
 		background = assetManager.get(Constants.BACKGROUND);
 		// create game resource objects
-		bunny1 = new Hero1(atlas);
-		bunny2 = new Hero2(atlas);
-		bunny3 = new Hero3(atlas);
-		bunny4 = new Hero4(atlas);
-		bunny5 = new Hero5(atlas);
-		bunny6 = new Hero6(atlas);
+		assetHeros.put("hero1",new AssetHero(atlas,"1"));
 	}
 
 	@Override

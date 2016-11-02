@@ -1,4 +1,4 @@
-package com.v5ent.game.sprites;
+package com.v5ent.game.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;

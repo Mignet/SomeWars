@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.v5ent.game.entities.Hero;
 import com.v5ent.game.utils.CameraHelper;
 import com.v5ent.game.utils.Constants;
 
@@ -33,7 +34,7 @@ public class WorldController extends InputAdapter {
 	private static final String TAG = WorldController.class.getName();
 
 	public Sprite background;
-	public Sprite[] testSprites;
+	public Hero[] testSprites;
 	public int selectedSprite;
 
 	public CameraHelper cameraHelper;
@@ -55,7 +56,7 @@ public class WorldController extends InputAdapter {
 		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
 		background.setPosition(-Constants.VIEWPORT_WIDTH/2, -Constants.VIEWPORT_HEIGHT/2);
 		// Create new array for 5 sprites
-		testSprites = new Sprite[6];
+		testSprites = new Hero[6];
 		// Create a list of texture regions
 		Array<TextureRegion> regions = new Array<TextureRegion>();
 		regions.add(Assets.instance.bunny1.head);
@@ -66,7 +67,8 @@ public class WorldController extends InputAdapter {
 		regions.add(Assets.instance.bunny6.stand);
 		// Create new sprites using a random texture region
 		for (int i = 0; i < testSprites.length; i++) {
-			Sprite spr = new Sprite(regions.get(i));
+//			Hero spr = new Hero(regions.get(i));
+			Hero spr = new Hero(Assets.instance.assetHeros.get(i).stand);
 			// Define sprite size to be 1m x 1m in game world
 			spr.setSize(spr.getWidth()/80, spr.getHeight()/80);
 			// Set origin to sprite's center
