@@ -2,11 +2,13 @@ package com.v5ent.game.entities;
 
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 
-public class Hero extends Sprite{
+public class Hero extends Sprite implements InputProcessor{
 	private static final String TAG = Hero.class.getSimpleName();
 	private static final String defaultSpritePath = "sprites/characters/Warrior.png";
 	
@@ -31,6 +33,7 @@ public class Hero extends Sprite{
 	
 	public Hero(AtlasRegion stand) {
 		super(stand);
+		Gdx.input.setInputProcessor(this);
 	}
 	public int getMapX() {
 		return mapX;
@@ -70,5 +73,54 @@ public class Hero extends Sprite{
 	}
 	public List<Vector2> getFightRange() {
 		return fightRange;
+	}
+	@Override
+	public boolean keyDown(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean keyTyped(char arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean keyUp(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean mouseMoved(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean scrolled(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		float pointerX = InputTransform.getCursorToModelX(windowWidth, screenX);
+	      float pointerY = InputTransform.getCursorToModelY(windowHeight, screenY);
+	      for(int i = 0; i < balloons.size(); i++)
+	      {
+	          if(balloons.get(i).contains(pointerX, pointerY))
+	          {
+	              balloons.get(i).setSelected(true);
+	          }
+	      }
+	      return true;
+		return false;
+	}
+	@Override
+	public boolean touchDragged(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
