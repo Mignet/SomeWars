@@ -50,6 +50,7 @@ public class Hero{
 	private List<Vector2> moveRange;
 	/**(0,0)-(1,0),(2,0) */
 	private List<Vector2> fightRange;
+	/**Coordinate in map */
 	private int X;
 	private int Y;
 	
