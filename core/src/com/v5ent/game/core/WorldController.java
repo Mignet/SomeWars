@@ -24,6 +24,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.v5ent.game.entities.Hero;
 import com.v5ent.game.utils.CameraHelper;
@@ -61,7 +62,7 @@ public class WorldController extends InputAdapter {
 		// Create new sprites using a random texture region
 		for (int i = 0; i < testSprites.length; i++) {
 //			Hero spr = new Hero(regions.get(i));
-			Hero spr = new Hero(Assets.instance.assetHeros.get(i).stand);
+			Hero spr = new Hero("hero"+i);
 			// Define sprite size to be 1m x 1m in game world
 			spr.setSize(spr.getWidth()/80, spr.getHeight()/80);
 			// Set origin to sprite's center
@@ -161,11 +162,15 @@ public class WorldController extends InputAdapter {
 	
 	 @Override
 	    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-	       /* if(pointer < 5){
-	            touches.get(pointer).touchX = screenX;
-	            touches.get(pointer).touchY = screenY;
-	            touches.get(pointer).touched = true;
-	        }*/
+		 int x1 = Gdx.input.getX();
+		 int y1 = Gdx.input.getY();
+		 Vector3 input = new Vector3(x1, y1, 0);
+		 cameraHelper.cam.unproject(input);
+		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
+		 //sprite has been clicked
+		 if(sprite.getBoundingRectange().contains(input.x, input.y)) {
+		     //Do whatever you want to do with the sprite when clicked
+		 }
 	        return true;
 	    }
 
