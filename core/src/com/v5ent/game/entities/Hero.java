@@ -46,8 +46,6 @@ public class Hero extends Sprite{
 	
 	public Hero(String id) {
 		AssetHero ah = Assets.instance.assetHeros.get(id);
-		
-//		super(ah.stand);
 	}
 	
 	/** 朝向 */
@@ -58,6 +56,10 @@ public class Hero extends Sprite{
 	private Animation walkLeftAnimation;
 	private Animation walkRightAnimation;
 
+	public void update(float delta) {
+		frameTime = (frameTime + delta) % 5; // Want to avoid overflow
+	}
+	
 	public void setDirection(Direction direction, float deltaTime) {
 		this.dir = direction;
 		// Look into the appropriate variable when changing position
