@@ -26,9 +26,12 @@ import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Array;
 import com.v5ent.game.utils.Constants;
 
 public class Assets implements Disposable, AssetErrorListener {
@@ -48,10 +51,20 @@ public class Assets implements Disposable, AssetErrorListener {
 	}
 
 	public class AssetHero {
-		public final AtlasRegion stand;
+		public final Animation idleLeftAnimation;
+		public final Animation walkLeftAnimation;
 
-		public AssetHero (TextureAtlas atlas, String id) {
-			stand = atlas.findRegion(id);
+		public AssetHero (TextureAtlas atlas) {
+			Array<TextureRegion> idleLeftFrames = new Array<TextureRegion>(4);
+			for (int i = 0; i < 4; i++) {
+				idleLeftFrames.insert(i, atlas.findRegion("idleLeft"+i));
+			}
+			idleLeftAnimation = new Animation(0.25f, idleLeftFrames, Animation.LOOP);
+			Array<TextureRegion> walkLeftFrames = new Array<TextureRegion>(4);
+			for (int i = 0; i < 4; i++) {
+				walkLeftFrames.insert(i, atlas.findRegion("walkLeft"+i));
+			}
+			walkLeftAnimation = new Animation(0.25f, walkLeftFrames, Animation.LOOP);
 		}
 	}
 
@@ -79,7 +92,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		}
 		background = assetManager.get(Constants.BACKGROUND);
 		// create game resource objects
-		assetHeros.put("hero1",new AssetHero(atlas,"1"));
+		assetHeros.put("hero1",new AssetHero(atlas));
 	}
 
 	@Override

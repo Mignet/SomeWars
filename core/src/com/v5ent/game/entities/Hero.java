@@ -2,10 +2,10 @@ package com.v5ent.game.entities;
 
 import java.util.List;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
@@ -13,14 +13,17 @@ import com.v5ent.game.core.Assets.AssetHero;
 public class Hero extends Sprite{
 	
 	private static final String TAG = Hero.class.getName();
-	private static final String defaultSpritePath = "sprites/characters/Warrior.png";
-	/**---僵直**/
+	/**---僵直---**/
 	public enum State {
 		IDLE, WALKING,MAGIC,FIGHT,BEATEN,DEAD,STIFF
 	}
+	
+	public enum Buff {
+		ICE,STONE, TOXICOSIS,FIRE
+	}
 
 	public enum Direction {
-		UP, RIGHT, DOWN, LEFT;
+		RIGHT, LEFT;
 	}
 	
 	private String id;
@@ -49,59 +52,21 @@ public class Hero extends Sprite{
 	
 	/** 朝向 */
 	private Direction dir;
-
-	private void loadAllAnimations() {
-		// Walking animation
-		Texture texture = Utility.getTextureAsset(_defaultSpritePath);
-		TextureRegion[][] textureFrames = TextureRegion.split(texture, FRAME_WIDTH, FRAME_HEIGHT);
-		_walkDownFrames = new Array<TextureRegion>(4);
-		_walkLeftFrames = new Array<TextureRegion>(4);
-		_walkRightFrames = new Array<TextureRegion>(4);
-		_walkUpFrames = new Array<TextureRegion>(4);
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				TextureRegion region = textureFrames[i][j];
-				if (region == null) {
-					Gdx.app.debug(TAG, "Got null animation frame " + i + "," + j);
-				}
-				switch (i) {
-				case 0:
-					_walkDownFrames.insert(j, region);
-					break;
-				case 1:
-					_walkLeftFrames.insert(j, region);
-					break;
-				case 2:
-					_walkRightFrames.insert(j, region);
-					break;
-				case 3:
-					_walkUpFrames.insert(j, region);
-					break;
-				}
-			}
-		}
-		_walkDownAnimation = new Animation(0.25f, _walkDownFrames, Animation.PlayMode.LOOP);
-		_walkLeftAnimation = new Animation(0.25f, _walkLeftFrames, Animation.PlayMode.LOOP);
-		_walkRightAnimation = new Animation(0.25f, _walkRightFrames, Animation.PlayMode.LOOP);
-		_walkUpAnimation = new Animation(0.25f, _walkUpFrames, Animation.PlayMode.LOOP);
-	}
+	private Vector2 nextPosition;
+	private Vector2 velocity;
+	
+	private Animation walkLeftAnimation;
+	private Animation walkRightAnimation;
 
 	public void setDirection(Direction direction, float deltaTime) {
-		this._previousDirection = this._currentDirection;
-		this._currentDirection = direction;
+		this.dir = direction;
 		// Look into the appropriate variable when changing position
-		switch (_currentDirection) {
-		case DOWN:
-			_currentFrame = _walkDownAnimation.getKeyFrame(_frameTime);
-			break;
+		switch (dir) {
 		case LEFT:
-			_currentFrame = _walkLeftAnimation.getKeyFrame(_frameTime);
-			break;
-		case UP:
-			_currentFrame = _walkUpAnimation.getKeyFrame(_frameTime);
+			currentFrame = walkLeftAnimation.getKeyFrame(frameTime);
 			break;
 		case RIGHT:
-			_currentFrame = _walkRightAnimation.getKeyFrame(_frameTime);
+			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
 			break;
 		default:
 			break;
@@ -109,33 +74,27 @@ public class Hero extends Sprite{
 	}
 
 	public void setNextPositionToCurrent() {
-		setCurrentPosition(_nextPlayerPosition.x, _nextPlayerPosition.y);
+		setPosition(nextPosition.x, nextPosition.y);
 	}
 
 	public void calculateNextPosition(Direction currentDirection, float deltaTime) {
-		float testX = _currentPlayerPosition.x;
-		float testY = _currentPlayerPosition.y;
-		_velocity.scl(deltaTime);
+		float testX = this.getX();
+		float testY = this.getY();
+		velocity.scl(deltaTime);
 		switch (currentDirection) {
 		case LEFT:
-			testX -= _velocity.x;
+			testX -= velocity.x;
 			break;
 		case RIGHT:
-			testX += _velocity.x;
-			break;
-		case UP:
-			testY += _velocity.y;
-			break;
-		case DOWN:
-			testY -= _velocity.y;
+			testX += velocity.x;
 			break;
 		default:
 			break;
 		}
-		_nextPlayerPosition.x = testX;
-		_nextPlayerPosition.y = testY;
+		nextPosition.x = testX;
+		nextPosition.y = testY;
 		// velocity
-		_velocity.scl(1 / deltaTime);
+		velocity.scl(1 / deltaTime);
 	}
 	
 	@Override
@@ -152,7 +111,7 @@ public class Hero extends Sprite{
 		}
 
 		// Draw image
-		reg = stand;
+		reg = currentFrame;
 		batch.draw(reg.getTexture(), getX(), getY(),getOriginX(), getOriginY(), getRegionX(), getRegionY(), getScaleX(), getScaleY(),
 			getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
 			dir == Direction.LEFT, false);
@@ -206,7 +165,6 @@ public class Hero extends Sprite{
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-		
 	}
 	
 }
