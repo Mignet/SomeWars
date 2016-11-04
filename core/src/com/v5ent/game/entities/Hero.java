@@ -42,28 +42,28 @@ public class Hero extends Sprite{
 	protected float frameTime = 0f;
 	/**当前帧*/
 	private TextureRegion currentFrame = null;
-
+	private State currentState=State.IDLE;
 	
-	public Hero(String id) {
-		AssetHero ah = Assets.instance.assetHeros.get(id);
-	}
-	
-	/** 朝向 */
-	private Direction dir;
+	/** 当前朝向 */
+	private Direction currentDir = Direction.RIGHT;
 	private Vector2 nextPosition;
 	private Vector2 velocity;
 	
 	private Animation walkLeftAnimation;
 	private Animation walkRightAnimation;
 
+	public Hero(String id) {
+		AssetHero ah = Assets.instance.assetHeros.get(id);
+	}
+	
 	public void update(float delta) {
 		frameTime = (frameTime + delta) % 5; // Want to avoid overflow
 	}
 	
 	public void setDirection(Direction direction, float deltaTime) {
-		this.dir = direction;
+		this.currentDir = direction;
 		// Look into the appropriate variable when changing position
-		switch (dir) {
+		switch (currentDir) {
 		case LEFT:
 			currentFrame = walkLeftAnimation.getKeyFrame(frameTime);
 			break;
@@ -116,7 +116,7 @@ public class Hero extends Sprite{
 		reg = currentFrame;
 		batch.draw(reg.getTexture(), getX(), getY(),getOriginX(), getOriginY(), getRegionX(), getRegionY(), getScaleX(), getScaleY(),
 			getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
-			dir == Direction.LEFT, false);
+			currentDir == Direction.LEFT, false);
 
 		// Reset color to white
 		batch.setColor(1, 1, 1, 1);
