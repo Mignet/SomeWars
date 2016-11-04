@@ -51,20 +51,20 @@ public class Assets implements Disposable, AssetErrorListener {
 	}
 
 	public class AssetHero {
-		public final Animation idleLeftAnimation;
-		public final Animation walkLeftAnimation;
+		public final Animation idleRightAnimation;
+		public final Animation walkRightAnimation;
 
 		public AssetHero (TextureAtlas atlas) {
-			Array<TextureRegion> idleLeftFrames = new Array<TextureRegion>(4);
+			Array<TextureRegion> idleRightFrames = new Array<TextureRegion>(4);
 			for (int i = 0; i < 4; i++) {
-				idleLeftFrames.insert(i, atlas.findRegion("idleLeft"+i));
+				idleRightFrames.insert(i, atlas.findRegion("idleRight"+i));
 			}
-			idleLeftAnimation = new Animation(0.25f, idleLeftFrames, Animation.LOOP);
-			Array<TextureRegion> walkLeftFrames = new Array<TextureRegion>(4);
+			idleRightAnimation = new Animation(0.25f, idleRightFrames, Animation.LOOP);
+			Array<TextureRegion> walkRightFrames = new Array<TextureRegion>(4);
 			for (int i = 0; i < 4; i++) {
-				walkLeftFrames.insert(i, atlas.findRegion("walkLeft"+i));
+				walkRightFrames.insert(i, atlas.findRegion("walkRight"+i));
 			}
-			walkLeftAnimation = new Animation(0.25f, walkLeftFrames, Animation.LOOP);
+			walkRightAnimation = new Animation(0.25f, walkRightFrames, Animation.LOOP);
 		}
 	}
 

@@ -13,7 +13,7 @@ import com.v5ent.game.core.Assets.AssetHero;
 public class Hero extends Sprite{
 	
 	private static final String TAG = Hero.class.getName();
-	/**---僵直---**/
+	/**---待机、行走、施法、攻击、被打、死亡、僵直---**/
 	public enum State {
 		IDLE, WALKING,MAGIC,FIGHT,BEATEN,DEAD,STIFF
 	}
@@ -42,6 +42,7 @@ public class Hero extends Sprite{
 	protected float frameTime = 0f;
 	/**当前帧*/
 	private TextureRegion currentFrame = null;
+	/**当前状态 */
 	private State currentState=State.IDLE;
 	
 	/** 当前朝向 */
@@ -49,9 +50,21 @@ public class Hero extends Sprite{
 	private Vector2 nextPosition;
 	/** 速度 */
 	private float speed;
+	//LVL - The tile's level. The tiles level up when it gain some experience.
+	private int	level = 1;
+	//STR - The tile's Strength. Strength affects the damages.
+	private int	strength = 100;
+	private int	life = 100;
+	private int	maxlife = 100;
+	//DEF - The tile's defence. It represents avarage defence against physical attack.
+	//The tiles also have magic deffence.
+	private int	defend = 50;
+	//DEXterity - decide the order of actions
+	private int	dexterity = 20;
 	
-	private Animation walkLeftAnimation;
+	private Animation idleRightAnimation;
 	private Animation walkRightAnimation;
+//	private Animation walkRightAnimation;
 
 	public Hero(String id) {
 		AssetHero ah = Assets.instance.assetHeros.get(id);
@@ -66,7 +79,7 @@ public class Hero extends Sprite{
 		// Look into the appropriate variable when changing position
 		switch (currentDir) {
 		case LEFT:
-			currentFrame = walkLeftAnimation.getKeyFrame(frameTime);
+			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
 			break;
 		case RIGHT:
 			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
