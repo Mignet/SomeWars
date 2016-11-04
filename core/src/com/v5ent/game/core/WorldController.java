@@ -21,6 +21,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 import com.v5ent.game.entities.Hero;
@@ -30,6 +31,8 @@ public class WorldController extends InputAdapter {
 
 	private static final String TAG = WorldController.class.getName();
 
+	public OrthographicCamera camera;
+	
 	public Sprite background;
 	public Hero[] testSprites;
 	public int selectedSprite;
@@ -40,6 +43,13 @@ public class WorldController extends InputAdapter {
 
 	private void init () {
 		Gdx.input.setInputProcessor(this);
+		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
+		camera.position.set(0, 0, 0);
+		camera.update();
+		// we want the camera to setup a viewport with pixels as units, with the
+		// y-axis pointing upwards. The origin will be in the lower left corner
+		// of the screen.
+//		camera.setToOrtho(false);
 		initTestObjects();
 	}
 
@@ -123,13 +133,14 @@ public class WorldController extends InputAdapter {
 		 int x1 = Gdx.input.getX();
 		 int y1 = Gdx.input.getY();
 		 Vector3 input = new Vector3(x1, y1, 0);
+		 camera.unproject(input);
 		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
-//		 camera.unproject(input);
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
-		 /*if(sprite.getBoundingRectange().contains(input.x, input.y)) {
+		 if(testSprites[selectedSprite].getBoundingRectangle().contains(input.x, input.y)) {
 		     //Do whatever you want to do with the sprite when clicked
-		 }*/
+			 Gdx.app.debug(TAG, " # (Sprite #" + selectedSprite + " clicked)");
+		 }
 	        return true;
 	    }
 
