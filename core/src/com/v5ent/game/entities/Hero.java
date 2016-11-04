@@ -47,7 +47,8 @@ public class Hero extends Sprite{
 	/** 当前朝向 */
 	private Direction currentDir = Direction.RIGHT;
 	private Vector2 nextPosition;
-	private Vector2 velocity;
+	/** 速度 */
+	private float speed;
 	
 	private Animation walkLeftAnimation;
 	private Animation walkRightAnimation;
@@ -82,13 +83,13 @@ public class Hero extends Sprite{
 	public void calculateNextPosition(Direction currentDirection, float deltaTime) {
 		float testX = this.getX();
 		float testY = this.getY();
-		velocity.scl(deltaTime);
+		speed *=(deltaTime);
 		switch (currentDirection) {
 		case LEFT:
-			testX -= velocity.x;
+			testX -= speed;
 			break;
 		case RIGHT:
-			testX += velocity.x;
+			testX += speed;
 			break;
 		default:
 			break;
@@ -96,7 +97,7 @@ public class Hero extends Sprite{
 		nextPosition.x = testX;
 		nextPosition.y = testY;
 		// velocity
-		velocity.scl(1 / deltaTime);
+		speed *=(1 / deltaTime);
 	}
 	
 	@Override
@@ -167,6 +168,14 @@ public class Hero extends Sprite{
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 	
 }

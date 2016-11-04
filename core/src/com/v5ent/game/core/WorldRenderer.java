@@ -41,6 +41,10 @@ public class WorldRenderer implements Disposable {
 		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
 		camera.update();
+		// we want the camera to setup a viewport with pixels as units, with the
+		// y-axis pointing upwards. The origin will be in the lower left corner
+		// of the screen.
+//		camera.setToOrtho(false);
 	}
 
 	public void render () {
@@ -48,7 +52,6 @@ public class WorldRenderer implements Disposable {
 	}
 
 	private void renderTestObjects () {
-		worldController.cameraHelper.applyTo(camera);
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		//draw background

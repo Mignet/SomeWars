@@ -22,12 +22,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.v5ent.game.entities.Hero;
-import com.v5ent.game.utils.CameraHelper;
 import com.v5ent.game.utils.Constants;
 
 public class WorldController extends InputAdapter {
@@ -38,15 +34,12 @@ public class WorldController extends InputAdapter {
 	public Hero[] testSprites;
 	public int selectedSprite;
 
-	public CameraHelper cameraHelper;
-
 	public WorldController () {
 		init();
 	}
 
 	private void init () {
 		Gdx.input.setInputProcessor(this);
-		cameraHelper = new CameraHelper();
 		initTestObjects();
 	}
 
@@ -64,7 +57,7 @@ public class WorldController extends InputAdapter {
 //			Hero spr = new Hero(regions.get(i));
 			Hero spr = new Hero("hero"+i);
 			// Define sprite size to be 1m x 1m in game world
-			spr.setSize(spr.getWidth()/80, spr.getHeight()/80);
+			spr.setSize(spr.getWidth()/Constants.CELL_WIDTH, spr.getHeight()/Constants.CELL_HEIGHT);
 			// Set origin to sprite's center
 			spr.setOrigin(spr.getWidth() / 2.0f, 0);
 			// Calculate random position for sprite
@@ -82,7 +75,6 @@ public class WorldController extends InputAdapter {
 	public void update (float deltaTime) {
 		handleDebugInput(deltaTime);
 //		updateTestObjects(deltaTime);
-		cameraHelper.update(deltaTime);
 	}
 
 	private void updateTestObjects (float deltaTime) {
@@ -105,34 +97,10 @@ public class WorldController extends InputAdapter {
 		if (Gdx.input.isKeyPressed(Keys.D)) moveSelectedSprite(sprMoveSpeed, 0);
 		if (Gdx.input.isKeyPressed(Keys.W)) moveSelectedSprite(0, sprMoveSpeed);
 		if (Gdx.input.isKeyPressed(Keys.S)) moveSelectedSprite(0, -sprMoveSpeed);
-
-		// Camera Controls (move)
-		float camMoveSpeed = 5 * deltaTime;
-		float camMoveSpeedAccelerationFactor = 5;
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) camMoveSpeed *= camMoveSpeedAccelerationFactor;
-		if (Gdx.input.isKeyPressed(Keys.LEFT)) moveCamera(-camMoveSpeed, 0);
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)) moveCamera(camMoveSpeed, 0);
-		if (Gdx.input.isKeyPressed(Keys.UP)) moveCamera(0, camMoveSpeed);
-		if (Gdx.input.isKeyPressed(Keys.DOWN)) moveCamera(0, -camMoveSpeed);
-		if (Gdx.input.isKeyPressed(Keys.BACKSPACE)) cameraHelper.setPosition(0, 0);
-
-		// Camera Controls (zoom)
-		float camZoomSpeed = 1 * deltaTime;
-		float camZoomSpeedAccelerationFactor = 5;
-		if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) camZoomSpeed *= camZoomSpeedAccelerationFactor;
-		if (Gdx.input.isKeyPressed(Keys.COMMA)) cameraHelper.addZoom(camZoomSpeed);
-		if (Gdx.input.isKeyPressed(Keys.PERIOD)) cameraHelper.addZoom(-camZoomSpeed);
-		if (Gdx.input.isKeyPressed(Keys.SLASH)) cameraHelper.setZoom(1);
 	}
 
 	private void moveSelectedSprite (float x, float y) {
 		testSprites[selectedSprite].translate(x, y);
-	}
-
-	private void moveCamera (float x, float y) {
-		x += cameraHelper.getPosition().x;
-		y += cameraHelper.getPosition().y;
-		cameraHelper.setPosition(x, y);
 	}
 
 	@Override
@@ -145,17 +113,7 @@ public class WorldController extends InputAdapter {
 		// Select next sprite
 		else if (keycode == Keys.SPACE) {
 			selectedSprite = (selectedSprite + 1) % testSprites.length;
-			// Update camera's target to follow the currently
-			// selected sprite
-			if (cameraHelper.hasTarget()) {
-				cameraHelper.setTarget(testSprites[selectedSprite]);
-			}
 			Gdx.app.debug(TAG, "Sprite #" + selectedSprite + " selected");
-		}
-		// Toggle camera follow
-		else if (keycode == Keys.ENTER) {
-			cameraHelper.setTarget(cameraHelper.hasTarget() ? null : testSprites[selectedSprite]);
-			Gdx.app.debug(TAG, "Camera follow enabled: " + cameraHelper.hasTarget());
 		}
 		return false;
 	}
@@ -165,12 +123,13 @@ public class WorldController extends InputAdapter {
 		 int x1 = Gdx.input.getX();
 		 int y1 = Gdx.input.getY();
 		 Vector3 input = new Vector3(x1, y1, 0);
-		 cameraHelper.cam.unproject(input);
+		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
+//		 camera.unproject(input);
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
-		 if(sprite.getBoundingRectange().contains(input.x, input.y)) {
+		 /*if(sprite.getBoundingRectange().contains(input.x, input.y)) {
 		     //Do whatever you want to do with the sprite when clicked
-		 }
+		 }*/
 	        return true;
 	    }
 

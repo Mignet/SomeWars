@@ -19,11 +19,17 @@ package com.v5ent.game.utils;
 
 public class Constants {
 
-	// Visible game world is 5 meters wide
+	// Visible game world is 16 meters wide
 	public static final float VIEWPORT_WIDTH = 16.0f;
 
-	// Visible game world is 5 meters tall
+	// Visible game world is 9 meters tall
 	public static final float VIEWPORT_HEIGHT = 9.0f;
+	
+	// Cell is 5 meters wide
+	public static final float CELL_WIDTH = 96.0f;
+	
+	// Cell is 5 meters tall
+	public static final float CELL_HEIGHT = 80.0f;
 
 	// Location of description file for texture atlas
 	public static final String HEROS = "heros/heros.pack";
