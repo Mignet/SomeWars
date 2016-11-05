@@ -27,6 +27,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -43,6 +44,8 @@ public class Assets implements Disposable, AssetErrorListener {
 	private AssetManager assetManager;
 
 	public Texture background;
+	public Texture moveCell;
+	public Texture fightCell;
 	
 	public Map<String,AssetHero> assetHeros = new HashMap<String, AssetHero>();
 
@@ -75,6 +78,9 @@ public class Assets implements Disposable, AssetErrorListener {
 		assetManager.setErrorListener(this);
 		// load texture atlas
 		assetManager.load(Constants.BACKGROUND, Texture.class);
+		assetManager.load(Constants.MOVE_CELL, Texture.class);
+		assetManager.load(Constants.FIGHT_CELL, Texture.class);
+		//TODO:当前提供的所有英雄
 		int heroCnt = 1;
 		//look all hero's pack
 		for(int i=1;i<=heroCnt ;i++){
@@ -89,6 +95,8 @@ public class Assets implements Disposable, AssetErrorListener {
 		}
 
 		background = assetManager.get(Constants.BACKGROUND);
+		moveCell = assetManager.get(Constants.MOVE_CELL);
+		fightCell = assetManager.get(Constants.FIGHT_CELL);
 		for(int i=1;i<=heroCnt ;i++){
 			TextureAtlas atlas = assetManager.get("heros/00"+i+".pack");
 			// create game resource objects

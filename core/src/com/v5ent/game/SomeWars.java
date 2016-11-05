@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.input.GestureDetector;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.WorldController;
 import com.v5ent.game.core.WorldRenderer;
@@ -21,6 +22,8 @@ public class SomeWars extends Game {
 		Assets.instance.init(new AssetManager());
 		// Initialize controller and renderer
 		worldController = new WorldController();
+		GestureDetector gestureDetector = new GestureDetector(10, 0.5f, 2, 0.15f, worldController);
+		Gdx.input.setInputProcessor(gestureDetector);
 		worldRenderer = new WorldRenderer(worldController);
 	}
 

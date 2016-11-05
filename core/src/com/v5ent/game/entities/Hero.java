@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
 import com.v5ent.game.utils.Constants;
+import com.v5ent.game.utils.Transform;
 
 public class Hero extends Sprite{
 	
@@ -74,7 +75,7 @@ public class Hero extends Sprite{
 		walkRightAnimation = ah.walkRightAnimation;
 		currentFrame =idleRightAnimation.getKeyFrame(0);
 		// Define sprite size to be 1m x 1m in game world
-		this.setSize(currentFrame.getRegionWidth()/Constants.CELL_WIDTH, currentFrame.getRegionHeight()/Constants.CELL_HEIGHT);
+		this.setSize(currentFrame.getRegionWidth()/Constants.RV_RATIO, currentFrame.getRegionHeight()/Constants.RV_RATIO);
 		// Set origin to sprite's center
 		this.setOrigin(this.getWidth() / 2.0f, 0);
 	}
@@ -217,6 +218,12 @@ public class Hero extends Sprite{
 
 	public void setSpeed(float speed) {
 		this.speed = speed;
+	}
+
+	public void setMapPosition(int x, int y) {
+		this.mapX = x;
+		this.mapY = y;
+		this.setPosition(Transform.positionInWorldX(x), Transform.positionInWorldY(y));
 	}
 	
 }

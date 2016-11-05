@@ -64,6 +64,9 @@ public class WorldRenderer implements Disposable {
 		for (Hero sprite : temp) {
 			sprite.draw(batch);
 		}
+		//draw move cell
+		worldController.moveCell.draw(batch);
+		worldController.moveCell2.draw(batch);
 		batch.end();
 	}
 	

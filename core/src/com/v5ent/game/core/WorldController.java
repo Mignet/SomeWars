@@ -26,19 +26,27 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.v5ent.game.entities.Hero;
 import com.v5ent.game.utils.Constants;
+import com.v5ent.game.utils.Transform;
 
-public class WorldController extends InputAdapter {
+public class WorldController extends InputAdapter implements GestureListener {
 
 	private static final String TAG = WorldController.class.getName();
 
 	public OrthographicCamera camera;
 	
 	public Sprite background;
+	
+	public Sprite moveCell;
+	public Sprite moveCell2;
+	public Sprite fightCell;
 	public List<Hero> testSprites;
 	public int selectedIndex;
+
 
 	public WorldController () {
 		init();
@@ -58,23 +66,28 @@ public class WorldController extends InputAdapter {
 
 	private void initTestObjects () {
 		background = new Sprite(Assets.instance.background);
-		background.setSize(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
+		background.setSize(background.getWidth()/Constants.RV_RATIO, background.getHeight()/Constants.RV_RATIO);
 		// Set origin to sprite's center
 		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
 		background.setPosition(-Constants.VIEWPORT_WIDTH/2, -Constants.VIEWPORT_HEIGHT/2);
+		moveCell =  new Sprite(Assets.instance.moveCell);
+		moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
+		moveCell.setPosition(Transform.positionInWorldX(0), Transform.positionInWorldY(0));
+		moveCell2 =  new Sprite(Assets.instance.moveCell);
+		moveCell2.setSize(moveCell2.getWidth()/Constants.RV_RATIO, moveCell2.getHeight()/Constants.RV_RATIO);
+		moveCell2.setPosition(Transform.positionInWorldX(10), Transform.positionInWorldY(6));
+		fightCell =  new Sprite(Assets.instance.fightCell);
+		fightCell.setSize(1, 1);
 		// Create new array for 5 sprites
 		testSprites = new ArrayList<Hero>();
 		int myHerosCnt = 5;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < myHerosCnt ; i++) {
-//			Hero spr = new Hero(regions.get(i));
+//			create hero by id
 			Hero spr = new Hero("001");
 			// Calculate random position for sprite
-//			float randomX = MathUtils.random(-5.0f, 5.0f);
-//			float randomY = MathUtils.random(-3.0f, 3.0f);
-//			spr.setPosition(randomX, randomY);
-			spr.setPosition(-(i)-.5f, -.5f);
+			spr.setMapPosition(i, 3);
 			// Put new sprite into array
 			testSprites.add(spr);
 		}
@@ -88,14 +101,6 @@ public class WorldController extends InputAdapter {
 	}
 
 	private void updateTestObjects (float deltaTime) {
-		// Get current rotation from selected sprite
-//		float rotation = testSprites.get(selectedIndex).getRotation();
-//		// Rotate sprite by 90 degrees per second
-//		rotation += 90 * deltaTime;
-//		// Wrap around at 360 degrees
-//		rotation %= 360;
-//		// Set new rotation value to selected sprite
-//		testSprites.get(selectedIndex).setRotation(rotation);
 		for(int i=0;i<testSprites.size();i++){
 			testSprites.get(i).update(deltaTime);
 		}
@@ -134,12 +139,15 @@ public class WorldController extends InputAdapter {
 	}
 	
 	 @Override
-	    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+	    public boolean touchDown(float screenX, float screenY, int pointer, int button) {
 		 int x1 = Gdx.input.getX();
 		 int y1 = Gdx.input.getY();
 		 Vector3 input = new Vector3(x1, y1, 0);
 		 camera.unproject(input);
 		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
+		 Gdx.app.debug(TAG, "clicked # (" + x1/Constants.RV_RATIO+","+ y1/Constants.RV_RATIO + " )");
+		 Gdx.app.debug(TAG, "clicked # (" +Transform.mouseInWorld( x1, y1)+ " )");
+		 Gdx.app.debug(TAG, "Game Screen # (" + Gdx.graphics.getWidth()+","+ Gdx.graphics.getHeight() + " )");
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
 		 for(int i=0;i<testSprites.size();i++){
@@ -170,4 +178,53 @@ public class WorldController extends InputAdapter {
 	        // TODO Auto-generated method stub
 	        return false;
 	    }
+
+		@Override
+		public boolean tap(float x, float y, int count, int button) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean longPress(float x, float y) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean fling(float velocityX, float velocityY, int button) {
+			Gdx.app.log("GestureDetectorTest", "fling " + velocityX + ", " + velocityY);
+			if(velocityX>1000){
+				Gdx.app.debug(TAG, "RIGHT");
+			}
+			if(velocityX<-1000){
+				Gdx.app.debug(TAG, "LEFT");
+			}
+			if(velocityY>1000){
+				Gdx.app.debug(TAG, "DOWN");
+			}
+			if(velocityY<-1000){
+				Gdx.app.debug(TAG, "UP");
+			}
+			return false;
+		}
+
+		@Override
+		public boolean pan(float x, float y, float deltaX, float deltaY) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean zoom(float initialDistance, float distance) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
+				Vector2 pointer1, Vector2 pointer2) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 }
