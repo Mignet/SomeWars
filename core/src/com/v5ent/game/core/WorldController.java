@@ -1,20 +1,3 @@
-/*******************************************************************************
- * Copyright 2013 Andreas Oehlke
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-
-
 package com.v5ent.game.core;
 
 import java.util.ArrayList;
@@ -41,12 +24,10 @@ public class WorldController extends InputAdapter implements GestureListener {
 	
 	public Sprite background;
 	
-	public Sprite moveCell;
-	public Sprite moveCell2;
-	public Sprite fightCell;
+	public List<Sprite> moveCells = new ArrayList<Sprite>();
+	public List<Sprite> fightCells = new ArrayList<Sprite>();
 	public List<Hero> myHeros;
 	public List<Hero> enemyHeros;
-//	public int selectedIndex;
 
 
 	public WorldController () {
@@ -71,14 +52,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		// Set origin to sprite's center
 		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
 		background.setPosition(-Constants.VIEWPORT_WIDTH/2, -Constants.VIEWPORT_HEIGHT/2);
-		moveCell =  new Sprite(Assets.instance.moveCell);
-		moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
-		moveCell.setPosition(Transform.positionInWorldX(0), Transform.positionInWorldY(0));
-		moveCell2 =  new Sprite(Assets.instance.moveCell);
-		moveCell2.setSize(moveCell2.getWidth()/Constants.RV_RATIO, moveCell2.getHeight()/Constants.RV_RATIO);
-		moveCell2.setPosition(Transform.positionInWorldX(10), Transform.positionInWorldY(6));
-		fightCell =  new Sprite(Assets.instance.fightCell);
-		fightCell.setSize(1, 1);
+		//moveCells
 		// Create new array for 5 sprites
 		myHeros = new ArrayList<Hero>();
 		int myHerosCnt = 5;
@@ -103,7 +77,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 			// Calculate random position for sprite
 			spr.setMapPosition(Constants.MAP_COLS-1-i, 3);
 			// Put new sprite into array
-			myHeros.add(spr);
+			enemyHeros.add(spr);
 		}
 		// Set first sprite as selected one
 //		selectedIndex = 0;
@@ -118,6 +92,9 @@ public class WorldController extends InputAdapter implements GestureListener {
 	private void updateObjects (float deltaTime) {
 		for(int i=0;i<myHeros.size();i++){
 			myHeros.get(i).update(deltaTime);
+		}
+		for(int i=0;i<enemyHeros.size();i++){
+			enemyHeros.get(i).update(deltaTime);
 		}
 	}
 
@@ -142,6 +119,8 @@ public class WorldController extends InputAdapter implements GestureListener {
 		if (keycode == Keys.R) {
 			init();
 			Gdx.app.debug(TAG, "Game world resetted");
+		}else if (keycode == Keys.Q) {
+			Gdx.app.exit();
 		}
 		// Select next sprite
 		/*else if (keycode == Keys.SPACE) {
@@ -165,17 +144,39 @@ public class WorldController extends InputAdapter implements GestureListener {
 		 Gdx.app.debug(TAG, "Game Screen # (" + Gdx.graphics.getWidth()+","+ Gdx.graphics.getHeight() + " )");
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
+		 moveCells.clear();
+		 fightCells.clear();
 		 for(int i=0;i<myHeros.size();i++){
 			 Hero h = myHeros.get(i);
 			 if(h.getBoundingRectangle().contains(input.x, input.y)) {
-				 //Do whatever you want to do with the sprite when clicked
-//				 myHeros.get(selectedIndex).setSelected(false);
-//				 selectedIndex = i;
 				 Gdx.app.debug(TAG, " # (Sprite #" + i + " clicked)");
 				 h.setSelected(true);
+				 for(Vector2 p:h.getMoveRange()){
+					 Sprite moveCell =  new Sprite(Assets.instance.moveCell);
+					 moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
+					 moveCell.setPosition(Transform.positionInWorldX(h.getMapX()+p.x), Transform.positionInWorldY(h.getMapY()+p.y));
+					 moveCells.add(moveCell);
+				 }
+			 }else{
+				 h.setSelected(false);
 			 }
 		 }
-	        return true;
+		 for(int i=0;i<enemyHeros.size();i++){
+			 Hero h = enemyHeros.get(i);
+			 if(h.getBoundingRectangle().contains(input.x, input.y)) {
+				 Gdx.app.debug(TAG, " # (Enemy Sprite #" + i + " clicked)");
+				 h.setSelected(true);
+				 for(Vector2 p:h.getFightRange()){
+					 Sprite fightCell =  new Sprite(Assets.instance.fightCell);
+					 fightCell.setSize(fightCell.getWidth()/Constants.RV_RATIO, fightCell.getHeight()/Constants.RV_RATIO);
+					 fightCell.setPosition(Transform.positionInWorldX(h.getMapX()-p.x), Transform.positionInWorldY(h.getMapY()+p.y));
+					 fightCells.add(fightCell);
+				 }
+			 }else{
+				 h.setSelected(false);
+			 }
+		 }
+	     return true;
 	    }
 
 	    @Override

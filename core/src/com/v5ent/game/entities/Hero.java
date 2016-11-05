@@ -1,5 +1,6 @@
 package com.v5ent.game.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -9,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
-import com.v5ent.game.entities.Hero.Direction;
 import com.v5ent.game.utils.Constants;
 import com.v5ent.game.utils.Transform;
 
@@ -33,9 +33,9 @@ public class Hero extends Sprite{
 	private String name;
 	private String desc;
 	/**可移动范围(0,0)-(1,0),(2,0) */
-	private List<Vector2> moveRange;
+	private List<Vector2> moveRange = new ArrayList<Vector2>();
 	/**攻击范围(0,0)-(1,0),(2,0) */
-	private List<Vector2> fightRange;
+	private List<Vector2> fightRange = new ArrayList<Vector2>();
 	/**在地图上的位置坐标*/
 	private int mapX;
 	private int mapY;
@@ -82,8 +82,11 @@ public class Hero extends Sprite{
 		moveRange.add(new Vector2(0,-1));
 		moveRange.add(new Vector2(1,0));
 		moveRange.add(new Vector2(-1,0));
-		fightRange.add(new Vector2(0,1));
 		fightRange.add(new Vector2(0,2));
+		fightRange.add(new Vector2(1,1));
+		fightRange.add(new Vector2(2,0));
+		fightRange.add(new Vector2(1,-1));
+		fightRange.add(new Vector2(0,-2));
 	}
 	
 	public void update(float delta) {
@@ -108,7 +111,7 @@ public class Hero extends Sprite{
 			updateCurrentFrame();
 			reg = currentFrame;
 	//		batch.draw(currentFrame.getTexture(),getX(), getY(),getWidth(),getHeight());
-			batch.draw(reg.getTexture(), getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
+			batch.draw(reg.getTexture(), (Constants.CELL_WIDTH-getWidth())/2+getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
 				getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
 				currentDir == Direction.LEFT, false);
 //			Gdx.app.debug(TAG, "hero's coor:"+getX()+","+getY());
@@ -118,32 +121,15 @@ public class Hero extends Sprite{
 
 	public void updateCurrentFrame() {
 		// Look into the appropriate variable when changing position
-		switch (currentDir) {
-		case LEFT:
-			switch(currentState){
-			case IDLE:
-				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
-				break;
-			case WALKING:
-				currentFrame = walkRightAnimation.getKeyFrame(frameTime);
-				break;
-			default:
-				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
-				break;
-			}
-		case RIGHT:
-			switch(currentState){
-			case IDLE:
-				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
-				break;
-			case WALKING:
-				currentFrame = walkRightAnimation.getKeyFrame(frameTime);
-				break;
-			default:
-				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
-				break;
-			}
+		switch (currentState) {
+		case IDLE:
+			currentFrame = idleRightAnimation.getKeyFrame(frameTime);
+			break;
+		case WALKING:
+			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
+			break;
 		default:
+			currentFrame = idleRightAnimation.getKeyFrame(frameTime);
 			break;
 		}
 	}
