@@ -1,0 +1,60 @@
+001.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+walkRight0
+  rotate: false
+  xy: 98, 2
+  size: 94, 92
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+idleRight0
+  rotate: false
+  xy: 98, 96
+  size: 94, 92
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+walkRight2
+  rotate: false
+  xy: 98, 2
+  size: 94, 92
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+walkRight1
+  rotate: false
+  xy: 2, 102
+  size: 94, 92
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+idleRight1
+  rotate: false
+  xy: 2, 2
+  size: 94, 98
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+walkRight3
+  rotate: false
+  xy: 2, 102
+  size: 94, 92
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+idleRight2
+  rotate: false
+  xy: 98, 96
+  size: 94, 92
+  orig: 110, 160
+  offset: 13, 21
+  index: -1
+idleRight3
+  rotate: false
+  xy: 2, 2
+  size: 94, 98
+  orig: 110, 160
+  offset: 13, 21
+  index: -1

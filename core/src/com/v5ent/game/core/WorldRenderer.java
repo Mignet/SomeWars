@@ -17,10 +17,14 @@
 
 package com.v5ent.game.core;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
+import com.v5ent.game.entities.Hero;
 import com.v5ent.game.utils.Constants;
 
 public class WorldRenderer implements Disposable {
@@ -48,12 +52,21 @@ public class WorldRenderer implements Disposable {
 		batch.begin();
 		//draw background
 		worldController.background.draw(batch);
-		for (Sprite sprite : worldController.testSprites) {
+		//draw heros
+		List<Hero> temp =new ArrayList<Hero>(worldController.testSprites);
+		Collections.sort(temp, new Comparator<Hero>() {
+             @Override
+             public int compare(Hero lhs, Hero rhs) {
+                 // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+                 return lhs.getY() > rhs.getY() ? -1 : (lhs.getY() < rhs.getY() ) ? 1 : 0;
+             }
+         });
+		for (Hero sprite : temp) {
 			sprite.draw(batch);
 		}
 		batch.end();
 	}
-
+	
 	public void resize (int width, int height) {
 		worldController.camera.viewportWidth = (Constants.VIEWPORT_HEIGHT / height) * width;
 		worldController.camera.update();

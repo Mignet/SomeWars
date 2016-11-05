@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
+import com.v5ent.game.utils.Constants;
 
 public class Hero extends Sprite{
 	
@@ -43,7 +44,7 @@ public class Hero extends Sprite{
 	/**当前帧*/
 	private TextureRegion currentFrame = null;
 	/**当前状态 */
-	private State currentState=State.IDLE;
+	private State currentState = State.IDLE;
 	
 	/** 当前朝向 */
 	private Direction currentDir = Direction.RIGHT;
@@ -67,23 +68,73 @@ public class Hero extends Sprite{
 //	private Animation walkRightAnimation;
 
 	public Hero(String id) {
+		
 		AssetHero ah = Assets.instance.assetHeros.get(id);
+		idleRightAnimation = ah.idleRightAnimation;
+		walkRightAnimation = ah.walkRightAnimation;
+		currentFrame =idleRightAnimation.getKeyFrame(0);
+		// Define sprite size to be 1m x 1m in game world
+		this.setSize(currentFrame.getRegionWidth()/Constants.CELL_WIDTH, currentFrame.getRegionHeight()/Constants.CELL_HEIGHT);
+		// Set origin to sprite's center
+		this.setOrigin(this.getWidth() / 2.0f, 0);
 	}
 	
 	public void update(float delta) {
-		frameTime = (frameTime + delta) % 5; // Want to avoid overflow
+		frameTime = (frameTime + delta) % 4; // Want to avoid overflow
 	}
 	
-	public void setDirection(Direction direction, float deltaTime) {
-		this.currentDir = direction;
+	@Override
+		public void draw(SpriteBatch batch) {
+	//		super.draw(batch);
+			TextureRegion reg = null;
+	
+			// Draw Particles
+	//		dustParticles.draw(batch);
+	
+			// Set special color when game object has a feather power-up
+			if (selected) {
+				batch.setColor(1.0f, 0.8f, 0.0f, 1.0f);
+			}
+	
+			// Draw image
+			setDirection();
+			reg = currentFrame;
+	//		batch.draw(currentFrame.getTexture(),getX(), getY(),getWidth(),getHeight());
+			batch.draw(reg.getTexture(), getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
+				getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
+				currentDir == Direction.LEFT, false);
+//			Gdx.app.debug(TAG, "hero's coor:"+getX()+","+getY());
+			// Reset color to white
+			batch.setColor(1, 1, 1, 1);
+		}
+
+	public void setDirection() {
 		// Look into the appropriate variable when changing position
 		switch (currentDir) {
 		case LEFT:
-			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
-			break;
+			switch(currentState){
+			case IDLE:
+				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
+				break;
+			case WALKING:
+				currentFrame = walkRightAnimation.getKeyFrame(frameTime);
+				break;
+			default:
+				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
+				break;
+			}
 		case RIGHT:
-			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
-			break;
+			switch(currentState){
+			case IDLE:
+				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
+				break;
+			case WALKING:
+				currentFrame = walkRightAnimation.getKeyFrame(frameTime);
+				break;
+			default:
+				currentFrame = idleRightAnimation.getKeyFrame(frameTime);
+				break;
+			}
 		default:
 			break;
 		}
@@ -111,29 +162,6 @@ public class Hero extends Sprite{
 		nextPosition.y = testY;
 		// velocity
 		speed *=(1 / deltaTime);
-	}
-	
-	@Override
-	public void draw(SpriteBatch batch) {
-		super.draw(batch);
-		TextureRegion reg = null;
-
-		// Draw Particles
-//		dustParticles.draw(batch);
-
-		// Set special color when game object has a feather power-up
-		if (selected) {
-			batch.setColor(1.0f, 0.8f, 0.0f, 1.0f);
-		}
-
-		// Draw image
-		reg = currentFrame;
-		batch.draw(reg.getTexture(), getX(), getY(),getOriginX(), getOriginY(), getRegionX(), getRegionY(), getScaleX(), getScaleY(),
-			getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
-			currentDir == Direction.LEFT, false);
-
-		// Reset color to white
-		batch.setColor(1, 1, 1, 1);
 	}
 	
 	public int getMapX() {

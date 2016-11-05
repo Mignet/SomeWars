@@ -74,8 +74,12 @@ public class Assets implements Disposable, AssetErrorListener {
 		// set asset manager error handler
 		assetManager.setErrorListener(this);
 		// load texture atlas
-		assetManager.load(Constants.HEROS, TextureAtlas.class);
 		assetManager.load(Constants.BACKGROUND, Texture.class);
+		int heroCnt = 1;
+		//look all hero's pack
+		for(int i=1;i<=heroCnt ;i++){
+			assetManager.load("heros/00"+i+".pack", TextureAtlas.class);
+		}
 		// start loading assets and wait until finished
 		assetManager.finishLoading();
 
@@ -84,15 +88,12 @@ public class Assets implements Disposable, AssetErrorListener {
 			Gdx.app.debug(TAG, "asset: " + a);
 		}
 
-		TextureAtlas atlas = assetManager.get(Constants.HEROS);
-
-		// enable texture filtering for pixel smoothing
-		for (Texture t : atlas.getTextures()) {
-			t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		}
 		background = assetManager.get(Constants.BACKGROUND);
-		// create game resource objects
-		assetHeros.put("hero1",new AssetHero(atlas));
+		for(int i=1;i<=heroCnt ;i++){
+			TextureAtlas atlas = assetManager.get("heros/00"+i+".pack");
+			// create game resource objects
+			assetHeros.put("00"+i,new AssetHero(atlas));
+		}
 	}
 
 	@Override

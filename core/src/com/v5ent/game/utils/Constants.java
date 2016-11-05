@@ -26,15 +26,15 @@ public class Constants {
 	public static final float VIEWPORT_HEIGHT = 9.0f;
 	
 	// Cell is 5 meters wide
-	public static final float CELL_WIDTH = 96.0f;
+	public static final float CELL_WIDTH = 90.0f;
 	
 	// Cell is 5 meters tall
-	public static final float CELL_HEIGHT = 80.0f;
+	public static final float CELL_HEIGHT = 70.0f;
 
 	// Location of description file for texture atlas
-	public static final String HEROS = "heros/heros.pack";
+//	public static final String HEROS = "heros/heros.pack";
 
 	// Location of image file for level 01
-	public static final String BACKGROUND = "battle/background.jpg";
+	public static final String BACKGROUND = "battle/background.png";
 
 }

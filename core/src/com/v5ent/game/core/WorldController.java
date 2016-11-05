@@ -17,6 +17,9 @@
 
 package com.v5ent.game.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -34,8 +37,8 @@ public class WorldController extends InputAdapter {
 	public OrthographicCamera camera;
 	
 	public Sprite background;
-	public Hero[] testSprites;
-	public int selectedSprite;
+	public List<Hero> testSprites;
+	public int selectedIndex;
 
 	public WorldController () {
 		init();
@@ -60,42 +63,42 @@ public class WorldController extends InputAdapter {
 		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
 		background.setPosition(-Constants.VIEWPORT_WIDTH/2, -Constants.VIEWPORT_HEIGHT/2);
 		// Create new array for 5 sprites
-		testSprites = new Hero[6];
+		testSprites = new ArrayList<Hero>();
+		int myHerosCnt = 5;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
-		for (int i = 0; i < testSprites.length; i++) {
+		for (int i = 0; i < myHerosCnt ; i++) {
 //			Hero spr = new Hero(regions.get(i));
-			Hero spr = new Hero("hero"+i);
-			// Define sprite size to be 1m x 1m in game world
-			spr.setSize(spr.getWidth()/Constants.CELL_WIDTH, spr.getHeight()/Constants.CELL_HEIGHT);
-			// Set origin to sprite's center
-			spr.setOrigin(spr.getWidth() / 2.0f, 0);
+			Hero spr = new Hero("001");
 			// Calculate random position for sprite
 //			float randomX = MathUtils.random(-5.0f, 5.0f);
 //			float randomY = MathUtils.random(-3.0f, 3.0f);
 //			spr.setPosition(randomX, randomY);
 			spr.setPosition(-(i)-.5f, -.5f);
 			// Put new sprite into array
-			testSprites[i] = spr;
+			testSprites.add(spr);
 		}
 		// Set first sprite as selected one
-		selectedSprite = 0;
+		selectedIndex = 0;
 	}
 
 	public void update (float deltaTime) {
 		handleDebugInput(deltaTime);
-//		updateTestObjects(deltaTime);
+		updateTestObjects(deltaTime);
 	}
 
 	private void updateTestObjects (float deltaTime) {
 		// Get current rotation from selected sprite
-		float rotation = testSprites[selectedSprite].getRotation();
-		// Rotate sprite by 90 degrees per second
-		rotation += 90 * deltaTime;
-		// Wrap around at 360 degrees
-		rotation %= 360;
-		// Set new rotation value to selected sprite
-		testSprites[selectedSprite].setRotation(rotation);
+//		float rotation = testSprites.get(selectedIndex).getRotation();
+//		// Rotate sprite by 90 degrees per second
+//		rotation += 90 * deltaTime;
+//		// Wrap around at 360 degrees
+//		rotation %= 360;
+//		// Set new rotation value to selected sprite
+//		testSprites.get(selectedIndex).setRotation(rotation);
+		for(int i=0;i<testSprites.size();i++){
+			testSprites.get(i).update(deltaTime);
+		}
 	}
 
 	private void handleDebugInput (float deltaTime) {
@@ -110,7 +113,7 @@ public class WorldController extends InputAdapter {
 	}
 
 	private void moveSelectedSprite (float x, float y) {
-		testSprites[selectedSprite].translate(x, y);
+		testSprites.get(selectedIndex).translate(x, y);
 	}
 
 	@Override
@@ -122,8 +125,10 @@ public class WorldController extends InputAdapter {
 		}
 		// Select next sprite
 		else if (keycode == Keys.SPACE) {
-			selectedSprite = (selectedSprite + 1) % testSprites.length;
-			Gdx.app.debug(TAG, "Sprite #" + selectedSprite + " selected");
+			testSprites.get(selectedIndex).setSelected(false);
+			selectedIndex = (selectedIndex + 1) % testSprites.size();
+			testSprites.get(selectedIndex).setSelected(true);
+			Gdx.app.debug(TAG, "Sprite #" + selectedIndex + " selected");
 		}
 		return false;
 	}
@@ -137,9 +142,15 @@ public class WorldController extends InputAdapter {
 		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
-		 if(testSprites[selectedSprite].getBoundingRectangle().contains(input.x, input.y)) {
-		     //Do whatever you want to do with the sprite when clicked
-			 Gdx.app.debug(TAG, " # (Sprite #" + selectedSprite + " clicked)");
+		 for(int i=0;i<testSprites.size();i++){
+			 Hero h = testSprites.get(i);
+			 if(h.getBoundingRectangle().contains(input.x, input.y)) {
+				 //Do whatever you want to do with the sprite when clicked
+				 testSprites.get(selectedIndex).setSelected(false);
+				 selectedIndex = i;
+				 Gdx.app.debug(TAG, " # (Sprite #" + i + " clicked)");
+				 h.setSelected(true);
+			 }
 		 }
 	        return true;
 	    }
