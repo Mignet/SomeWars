@@ -67,7 +67,7 @@ public class GameOverScreen implements Screen {
 
                                        @Override
                                        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                                           _game.setScreen(_game.mainMenuScreen);
+//                                           _game.setScreen(_game.mainMenuScreen);
                                        }
                                    }
         );

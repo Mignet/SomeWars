@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,23 +14,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.v5ent.game.SomeWars;
 import com.v5ent.game.core.Assets;
 
-public class NewGameScreen implements Screen {
+public class LoginGameScreen implements Screen {
 
 	private Stage _stage;
 	private SomeWars _game;
 	private TextField account;
+	private TextField password;
 
-	public NewGameScreen(SomeWars game){
+	public LoginGameScreen(SomeWars game){
 		_game = game;
 
 		//create
 		_stage = new Stage();
 		// + Background
         Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/1989C5FC.jpg")));
+        imgBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         _stage.addActor(imgBackground);
 		Texture tex = new Texture(Gdx.files.internal("menus/new-button.png"));       
 		TextureRegion[][] tmp = TextureRegion.split(tex, 112, 43);
@@ -39,9 +43,14 @@ public class NewGameScreen implements Screen {
 		Label profileName = new Label("请输入您的用户名: ", Assets.instance.STATUSUI_SKIN);
 		account  = new TextField("",Assets.instance.STATUSUI_SKIN, "inventory");
 		account.setMaxLength(20);
+		account.addListener(new ClickListener(){
+	        public void clicked(InputEvent e, float x, float y) {
+	            //perform some action once it is clicked.
+				UserNameInputListener listener = new UserNameInputListener();
+				Gdx.input.getTextInput(listener, "请输入您的用户名:", ""); 
+			}
+		});
 
-		MyTextInputListener listener = new MyTextInputListener();
-		Gdx.input.getTextInput(listener, "Dialog Title", "Initial Textfield Value");
 //		TextButton startButton = new TextButton("开始", Utility.STATUSUI_SKIN);
 //		TextButton backButton = new TextButton("返回", Utility.STATUSUI_SKIN);
 
@@ -89,7 +98,8 @@ public class NewGameScreen implements Screen {
 
 								   @Override
 								   public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-									   _game.setScreen(_game.mainMenuScreen);
+//									   _game.setScreen(_game.mainMenuScreen);
+									   
 								   }
 							   }
 		);

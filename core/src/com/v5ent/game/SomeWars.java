@@ -4,12 +4,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.screens.GameOverScreen;
+import com.v5ent.game.screens.LoginGameScreen;
 import com.v5ent.game.screens.MainGameScreen;
-import com.v5ent.game.screens.MainMenuScreen;
 
 public class SomeWars extends Game {
 
-	 public MainMenuScreen mainMenuScreen;
+	 public LoginGameScreen loginGameScreen;
 	 public MainGameScreen mainGameScreen;
 	 public GameOverScreen gameoverScreen;
 	
@@ -18,15 +18,16 @@ public class SomeWars extends Game {
 		// Load assets
 		Assets.instance.init(new AssetManager());
 		
-		mainMenuScreen = new MainMenuScreen(this);
+		loginGameScreen = new LoginGameScreen(this);
 		mainGameScreen = new MainGameScreen(this);
 		gameoverScreen = new GameOverScreen(this);
-        setScreen(mainMenuScreen);              
+        setScreen(loginGameScreen);              
 	}
 
 	@Override
 	public void dispose() {
 		mainGameScreen.dispose();
+		Assets.instance.dispose();
 	}
 	
 

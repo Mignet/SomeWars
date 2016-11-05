@@ -64,8 +64,9 @@ public class MainGameScreen  implements Screen{
 
 	@Override
 	public void dispose () {
-		worldRenderer.dispose();
-		Assets.instance.dispose();
+		if(worldRenderer!=null){
+			worldRenderer.dispose();
+		}
 	}
 
 	@Override
