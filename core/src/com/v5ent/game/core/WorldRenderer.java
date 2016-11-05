@@ -53,7 +53,7 @@ public class WorldRenderer implements Disposable {
 		//draw background
 		worldController.background.draw(batch);
 		//draw heros
-		List<Hero> temp =new ArrayList<Hero>(worldController.testSprites);
+		List<Hero> temp =new ArrayList<Hero>(worldController.myHeros);
 		Collections.sort(temp, new Comparator<Hero>() {
              @Override
              public int compare(Hero lhs, Hero rhs) {

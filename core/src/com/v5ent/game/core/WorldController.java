@@ -44,8 +44,9 @@ public class WorldController extends InputAdapter implements GestureListener {
 	public Sprite moveCell;
 	public Sprite moveCell2;
 	public Sprite fightCell;
-	public List<Hero> testSprites;
-	public int selectedIndex;
+	public List<Hero> myHeros;
+	public List<Hero> enemyHeros;
+//	public int selectedIndex;
 
 
 	public WorldController () {
@@ -61,10 +62,10 @@ public class WorldController extends InputAdapter implements GestureListener {
 		// y-axis pointing upwards. The origin will be in the lower left corner
 		// of the screen.
 //		camera.setToOrtho(false);
-		initTestObjects();
+		initObjects();
 	}
 
-	private void initTestObjects () {
+	private void initObjects () {
 		background = new Sprite(Assets.instance.background);
 		background.setSize(background.getWidth()/Constants.RV_RATIO, background.getHeight()/Constants.RV_RATIO);
 		// Set origin to sprite's center
@@ -79,7 +80,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		fightCell =  new Sprite(Assets.instance.fightCell);
 		fightCell.setSize(1, 1);
 		// Create new array for 5 sprites
-		testSprites = new ArrayList<Hero>();
+		myHeros = new ArrayList<Hero>();
 		int myHerosCnt = 5;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
@@ -89,24 +90,38 @@ public class WorldController extends InputAdapter implements GestureListener {
 			// Calculate random position for sprite
 			spr.setMapPosition(i, 3);
 			// Put new sprite into array
-			testSprites.add(spr);
+			myHeros.add(spr);
+		}
+		enemyHeros = new ArrayList<Hero>();
+		int yourHerosCnt = 3;
+		// Create a list of texture regions
+		// Create new sprites using a random texture region
+		for (int i = 0; i < yourHerosCnt ; i++) {
+//			create hero by id
+			Hero spr = new Hero("002");
+			spr.setDirection(Hero.Direction.LEFT);
+			// Calculate random position for sprite
+			spr.setMapPosition(Constants.MAP_COLS-1-i, 3);
+			// Put new sprite into array
+			myHeros.add(spr);
 		}
 		// Set first sprite as selected one
-		selectedIndex = 0;
+//		selectedIndex = 0;
+		
 	}
 
 	public void update (float deltaTime) {
-		handleDebugInput(deltaTime);
-		updateTestObjects(deltaTime);
+//		handleDebugInput(deltaTime);
+		updateObjects(deltaTime);
 	}
 
-	private void updateTestObjects (float deltaTime) {
-		for(int i=0;i<testSprites.size();i++){
-			testSprites.get(i).update(deltaTime);
+	private void updateObjects (float deltaTime) {
+		for(int i=0;i<myHeros.size();i++){
+			myHeros.get(i).update(deltaTime);
 		}
 	}
 
-	private void handleDebugInput (float deltaTime) {
+	/*private void handleDebugInput (float deltaTime) {
 		if (Gdx.app.getType() != ApplicationType.Desktop) return;
 
 		// Selected Sprite Controls
@@ -118,8 +133,8 @@ public class WorldController extends InputAdapter implements GestureListener {
 	}
 
 	private void moveSelectedSprite (float x, float y) {
-		testSprites.get(selectedIndex).translate(x, y);
-	}
+		myHeros.get(selectedIndex).translate(x, y);
+	}*/
 
 	@Override
 	public boolean keyUp (int keycode) {
@@ -129,12 +144,12 @@ public class WorldController extends InputAdapter implements GestureListener {
 			Gdx.app.debug(TAG, "Game world resetted");
 		}
 		// Select next sprite
-		else if (keycode == Keys.SPACE) {
-			testSprites.get(selectedIndex).setSelected(false);
-			selectedIndex = (selectedIndex + 1) % testSprites.size();
-			testSprites.get(selectedIndex).setSelected(true);
+		/*else if (keycode == Keys.SPACE) {
+			myHeros.get(selectedIndex).setSelected(false);
+			selectedIndex = (selectedIndex + 1) % myHeros.size();
+			myHeros.get(selectedIndex).setSelected(true);
 			Gdx.app.debug(TAG, "Sprite #" + selectedIndex + " selected");
-		}
+		}*/
 		return false;
 	}
 	
@@ -150,12 +165,12 @@ public class WorldController extends InputAdapter implements GestureListener {
 		 Gdx.app.debug(TAG, "Game Screen # (" + Gdx.graphics.getWidth()+","+ Gdx.graphics.getHeight() + " )");
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
-		 for(int i=0;i<testSprites.size();i++){
-			 Hero h = testSprites.get(i);
+		 for(int i=0;i<myHeros.size();i++){
+			 Hero h = myHeros.get(i);
 			 if(h.getBoundingRectangle().contains(input.x, input.y)) {
 				 //Do whatever you want to do with the sprite when clicked
-				 testSprites.get(selectedIndex).setSelected(false);
-				 selectedIndex = i;
+//				 myHeros.get(selectedIndex).setSelected(false);
+//				 selectedIndex = i;
 				 Gdx.app.debug(TAG, " # (Sprite #" + i + " clicked)");
 				 h.setSelected(true);
 			 }

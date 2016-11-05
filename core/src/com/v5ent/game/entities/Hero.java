@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
+import com.v5ent.game.entities.Hero.Direction;
 import com.v5ent.game.utils.Constants;
 import com.v5ent.game.utils.Transform;
 
@@ -69,7 +70,6 @@ public class Hero extends Sprite{
 //	private Animation walkRightAnimation;
 
 	public Hero(String id) {
-		
 		AssetHero ah = Assets.instance.assetHeros.get(id);
 		idleRightAnimation = ah.idleRightAnimation;
 		walkRightAnimation = ah.walkRightAnimation;
@@ -78,10 +78,17 @@ public class Hero extends Sprite{
 		this.setSize(currentFrame.getRegionWidth()/Constants.RV_RATIO, currentFrame.getRegionHeight()/Constants.RV_RATIO);
 		// Set origin to sprite's center
 		this.setOrigin(this.getWidth() / 2.0f, 0);
+		moveRange.add(new Vector2(0,1));
+		moveRange.add(new Vector2(0,-1));
+		moveRange.add(new Vector2(1,0));
+		moveRange.add(new Vector2(-1,0));
+		fightRange.add(new Vector2(0,1));
+		fightRange.add(new Vector2(0,2));
 	}
 	
 	public void update(float delta) {
 		frameTime = (frameTime + delta) % 4; // Want to avoid overflow
+		
 	}
 	
 	@Override
@@ -98,7 +105,7 @@ public class Hero extends Sprite{
 			}
 	
 			// Draw image
-			setDirection();
+			updateCurrentFrame();
 			reg = currentFrame;
 	//		batch.draw(currentFrame.getTexture(),getX(), getY(),getWidth(),getHeight());
 			batch.draw(reg.getTexture(), getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
@@ -109,7 +116,7 @@ public class Hero extends Sprite{
 			batch.setColor(1, 1, 1, 1);
 		}
 
-	public void setDirection() {
+	public void updateCurrentFrame() {
 		// Look into the appropriate variable when changing position
 		switch (currentDir) {
 		case LEFT:
@@ -224,6 +231,10 @@ public class Hero extends Sprite{
 		this.mapX = x;
 		this.mapY = y;
 		this.setPosition(Transform.positionInWorldX(x), Transform.positionInWorldY(y));
+	}
+
+	public void setDirection(Direction dir) {
+		this.currentDir = dir;
 	}
 	
 }

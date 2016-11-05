@@ -81,7 +81,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		assetManager.load(Constants.MOVE_CELL, Texture.class);
 		assetManager.load(Constants.FIGHT_CELL, Texture.class);
 		//TODO:当前提供的所有英雄
-		int heroCnt = 1;
+		int heroCnt = 2;
 		//look all hero's pack
 		for(int i=1;i<=heroCnt ;i++){
 			assetManager.load("heros/00"+i+".pack", TextureAtlas.class);
