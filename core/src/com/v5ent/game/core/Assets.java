@@ -66,7 +66,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		assetManager.load(Constants.BACKGROUND, Texture.class);
 		assetManager.load(Constants.MOVE_CELL, Texture.class);
 		assetManager.load(Constants.FIGHT_CELL, Texture.class);
-		STATUSUI_SKIN = new Skin(Gdx.files.internal("skins/statusui.json"), new TextureAtlas("skins/statusui.atlas"));
+		STATUSUI_SKIN = new Skin(Gdx.files.internal("skins/statusui.json"));
 		//TODO:当前提供的所有英雄
 		int heroCnt = 2;
 		//look all hero's pack

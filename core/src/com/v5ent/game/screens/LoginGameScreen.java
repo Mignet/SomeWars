@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
@@ -20,55 +21,73 @@ import com.v5ent.game.SomeWars;
 import com.v5ent.game.core.Assets;
 
 public class LoginGameScreen implements Screen {
-
-	private Stage _stage;
-	private SomeWars _game;
+	private static final String TAG = LoginGameScreen.class.getName();
+	private Stage stage;
+	private SomeWars gameIns;
 	private TextField account;
 	private TextField password;
 
 	public LoginGameScreen(SomeWars game){
-		_game = game;
+		gameIns = game;
 
 		//create
-		_stage = new Stage();
+		stage = new Stage();
 		// + Background
-        Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/1989C5FC.jpg")));
+        Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/welcome.jpg")));
         imgBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
-        _stage.addActor(imgBackground);
+        stage.addActor(imgBackground);
 		Texture tex = new Texture(Gdx.files.internal("menus/new-button.png"));       
 		TextureRegion[][] tmp = TextureRegion.split(tex, 112, 43);
-		ImageButton startButton = new  ImageButton(new TextureRegionDrawable(tmp[0][0]), new TextureRegionDrawable(tmp[0][1]));
-		ImageButton backButton = new  ImageButton(new TextureRegionDrawable(tmp[1][0]), new TextureRegionDrawable(tmp[1][1]));
+//		ImageButton startButton = new  ImageButton(new TextureRegionDrawable(tmp[0][0]), new TextureRegionDrawable(tmp[0][1]));
+//		ImageButton backButton = new  ImageButton(new TextureRegionDrawable(tmp[1][0]), new TextureRegionDrawable(tmp[1][1]));
 		
 		Label profileName = new Label("请输入您的用户名: ", Assets.instance.STATUSUI_SKIN);
 		account  = new TextField("",Assets.instance.STATUSUI_SKIN, "inventory");
 		account.setMaxLength(20);
-		account.addListener(new ClickListener(){
+		account.setMessageText(gameIns.prefs.getString("account", "test"));
+		/*account.addListener(new ClickListener(){
 	        public void clicked(InputEvent e, float x, float y) {
 	            //perform some action once it is clicked.
-				UserNameInputListener listener = new UserNameInputListener();
+				UserNameInputListener listener = new UserNameInputListener(gameIns);
 				Gdx.input.getTextInput(listener, "请输入您的用户名:", ""); 
 			}
-		});
+		});*/
+		// configures an example of a TextField in password mode.
+		Label profilePwd = new Label("请输入您的密码: ", Assets.instance.STATUSUI_SKIN);
+		password  = new TextField("",Assets.instance.STATUSUI_SKIN, "inventory");
+		password.setMaxLength(20);
+//		password.setMessageText("password");
+		password.setPasswordCharacter('*');
+		password.setPasswordMode(true);
+		/*password.addListener(new ClickListener(){
+			public void clicked(InputEvent e, float x, float y) {
+				//perform some action once it is clicked.
+				PasswordInputListener listener = new PasswordInputListener();
+				Gdx.input.getTextInput(listener, "请输入您的密码:", ""); 
+			}
+		});*/
 
-//		TextButton startButton = new TextButton("开始", Utility.STATUSUI_SKIN);
-//		TextButton backButton = new TextButton("返回", Utility.STATUSUI_SKIN);
+		TextButton startButton = new TextButton("开始", Assets.instance.STATUSUI_SKIN);
+//		TextButton backButton = new TextButton("返回", Assets.instance.STATUSUI_SKIN);
 
 		//Layout
 		Table topTable = new Table();
 		topTable.setFillParent(true);
 		topTable.add(profileName).center();
 		topTable.add(account).center();
+		topTable.row();
+		topTable.add(profilePwd).center();
+		topTable.add(password).center();
 
 		Table bottomTable = new Table();
 		bottomTable.setHeight(startButton.getHeight());
 		bottomTable.setWidth(Gdx.graphics.getWidth());
 		bottomTable.center();
-		bottomTable.add(startButton).padRight(50);
-		bottomTable.add(backButton);
+		bottomTable.add(startButton).padBottom(60);
+//		bottomTable.add(backButton);
 
-		_stage.addActor(topTable);
-		_stage.addActor(bottomTable);
+		stage.addActor(topTable);
+		stage.addActor(bottomTable);
 
 		startButton.addListener(new ClickListener() {
 
@@ -79,17 +98,21 @@ public class LoginGameScreen implements Screen {
 
 									@Override
 									public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+										//TODO:
+										Gdx.app.debug(TAG, "连接服务器，校验密码..登录...");
+										account.setText(gameIns.prefs.getString("account"));
 										String messageText = account.getText();
 										//如果什么都没有输入，直接返回
 										if("".equals(messageText.trim()))return;
 										//check to see if the current profile matches one that already exists
 										boolean exists = false;
-											_game.setScreen(_game.mainGameScreen);
+//										gameIns.setScreen(gameIns.prepareScreen);
+										gameIns.setScreen(gameIns.mainGameScreen);
 									}
 								}
 		);
 
-		backButton.addListener(new ClickListener() {
+		/*backButton.addListener(new ClickListener() {
 
 								   @Override
 								   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -98,11 +121,11 @@ public class LoginGameScreen implements Screen {
 
 								   @Override
 								   public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-//									   _game.setScreen(_game.mainMenuScreen);
+//									   gameIns.setScreen(gameIns.mainMenuScreen);
 									   
 								   }
 							   }
-		);
+		);*/
 
 	}
 
@@ -114,19 +137,19 @@ public class LoginGameScreen implements Screen {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        _stage.act(delta);
-        _stage.draw();
+        stage.act(delta);
+        stage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		_stage.setViewport(width, height,false);
+		stage.setViewport(width, height,false);
 	}
 
 	@Override
 	public void show() {
 		account.setText("");
-		Gdx.input.setInputProcessor(_stage);
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
@@ -145,8 +168,8 @@ public class LoginGameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		_stage.clear();
-		_stage.dispose();
+		stage.clear();
+		stage.dispose();
 	}
 
 }
