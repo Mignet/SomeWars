@@ -152,7 +152,6 @@ public class Hero extends Sprite{
 	//当没有障碍物时使用
 	public void setNextPositionToCurrent() {
 		setPosition(nextPosition.x, nextPosition.y);
-//		setMapPosition(Transform.positionInMapX(nextPosition.x),Transform.positionInMapY(nextPosition.y));
 	}
 
 	public void calculateNextPosition(float deltaTime) {
@@ -177,7 +176,7 @@ public class Hero extends Sprite{
 		}
 		nextPosition.x = testX;
 		nextPosition.y = testY;
-		Gdx.app.debug(TAG, "nextPosition:"+nextPosition);
+//		Gdx.app.debug(TAG, "nextPosition:"+nextPosition);
 		// velocity
 		speed *=(1 / deltaTime);
 	}
