@@ -26,7 +26,7 @@ public class Hero extends Sprite{
 	}
 
 	public enum Direction {
-		RIGHT, LEFT;
+		UP,DOWN,RIGHT, LEFT;
 	}
 	
 	private String id;
@@ -42,6 +42,8 @@ public class Hero extends Sprite{
 	
 	/** 是否被选中 */
 	private boolean selected;
+	/** 我方英雄*/
+	private boolean good;
 	protected float frameTime = 0f;
 	/**当前帧*/
 	private TextureRegion currentFrame = null;
@@ -52,7 +54,7 @@ public class Hero extends Sprite{
 	private Direction currentDir = Direction.RIGHT;
 	private Vector2 nextPosition;
 	/** 速度 */
-	private float speed;
+	private float speed = Constants.RV_RATIO;//一格一秒
 	//LVL - The tile's level. The tiles level up when it gain some experience.
 	private int	level = 1;
 	//STR - The tile's Strength. Strength affects the damages.
@@ -78,6 +80,7 @@ public class Hero extends Sprite{
 		this.setSize(currentFrame.getRegionWidth()/Constants.RV_RATIO, currentFrame.getRegionHeight()/Constants.RV_RATIO);
 		// Set origin to sprite's center
 		this.setOrigin(this.getWidth() / 2.0f, 0);
+		good = true;
 		moveRange.add(new Vector2(0,1));
 		moveRange.add(new Vector2(0,-1));
 		moveRange.add(new Vector2(1,0));
@@ -112,8 +115,7 @@ public class Hero extends Sprite{
 			reg = currentFrame;
 	//		batch.draw(currentFrame.getTexture(),getX(), getY(),getWidth(),getHeight());
 			batch.draw(reg.getTexture(), (Constants.CELL_WIDTH-getWidth())/2+getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
-				getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
-				currentDir == Direction.LEFT, false);
+				getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),!good, false);
 //			Gdx.app.debug(TAG, "hero's coor:"+getX()+","+getY());
 			// Reset color to white
 			batch.setColor(1, 1, 1, 1);
@@ -141,7 +143,7 @@ public class Hero extends Sprite{
 	public void calculateNextPosition(Direction currentDirection, float deltaTime) {
 		float testX = this.getX();
 		float testY = this.getY();
-		speed *=(deltaTime);
+//		speed *=(deltaTime);
 		switch (currentDirection) {
 		case LEFT:
 			testX -= speed;
@@ -149,13 +151,19 @@ public class Hero extends Sprite{
 		case RIGHT:
 			testX += speed;
 			break;
+		case UP:
+			testY += speed;
+			break;
+		case DOWN:
+			testY -= speed;
+			break;
 		default:
 			break;
 		}
 		nextPosition.x = testX;
 		nextPosition.y = testY;
 		// velocity
-		speed *=(1 / deltaTime);
+//		speed *=(1 / deltaTime);
 	}
 	
 	public int getMapX() {
@@ -213,6 +221,20 @@ public class Hero extends Sprite{
 		this.speed = speed;
 	}
 
+	/**
+	 * @return the good
+	 */
+	public boolean isGood() {
+		return good;
+	}
+
+	/**
+	 * @param good the good to set
+	 */
+	public void setGood(boolean good) {
+		this.good = good;
+	}
+
 	public void setMapPosition(int x, int y) {
 		this.mapX = x;
 		this.mapY = y;
@@ -221,6 +243,12 @@ public class Hero extends Sprite{
 
 	public void setDirection(Direction dir) {
 		this.currentDir = dir;
+	}
+
+	public void moveTo(int x, int y) {
+		this.mapX = x;
+		this.mapY = y;
+		this.setPosition(Transform.positionInWorldX(x), Transform.positionInWorldY(y));
 	}
 	
 }

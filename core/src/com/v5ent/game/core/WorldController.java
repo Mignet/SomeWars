@@ -41,8 +41,8 @@ public class WorldController extends InputAdapter implements GestureListener {
 	public WorldController () {
 		gameState = GameState.PREPARE;
 		Gdx.app.debug(TAG, "GameState:"+gameState);
-		 Timer timer = new Timer();
-	        Task timerTask = new Task() {
+		Timer timer = new Timer();
+	    Task timerTask = new Task() {
 	         @Override
 	            public void run() {
 	        	 	second--;
@@ -87,7 +87,8 @@ public class WorldController extends InputAdapter implements GestureListener {
 //			create hero by id
 			Hero spr = new Hero("001");
 			// Calculate random position for sprite
-			spr.setMapPosition(1, i);
+			spr.moveTo(1, i);
+			spr.setGood(true);
 			// Put new sprite into array
 			myHeros.add(spr);
 		}
@@ -98,9 +99,9 @@ public class WorldController extends InputAdapter implements GestureListener {
 		for (int i = 0; i < yourHerosCnt ; i++) {
 //			create hero by id
 			Hero spr = new Hero("002");
-			spr.setDirection(Hero.Direction.LEFT);
+			spr.setGood(false);
 			// Calculate random position for sprite
-			spr.setMapPosition(Constants.MAP_COLS-1-i, 3);
+			spr.moveTo(Constants.MAP_COLS-1-i, 3);
 			// Put new sprite into array
 			enemyHeros.add(spr);
 		}
@@ -113,7 +114,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		if(gameState == GameState.FIGHT){
 			//TODO: command
 			for(Hero h:enemyHeros){
-				h.setMapPosition(h.getMapX()-1, h.getMapY());
+				h.moveTo(h.getMapX()-1, h.getMapY());
 			}
 			//
 			/*try {
@@ -164,9 +165,10 @@ public class WorldController extends InputAdapter implements GestureListener {
 		  if(gameState == GameState.PREPARE && selectedHeroForPrepare!=null){
 			 for(Sprite m:moveCells){
 				 if(m.getBoundingRectangle().contains(input.x,input.y)){
-					 selectedHeroForPrepare.setMapPosition(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
+					 selectedHeroForPrepare.moveTo(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
 					 selectedHeroForPrepare.setSelected(false);
 					 selectedHeroForPrepare = null;
+					 moveCells.clear();
 					 return true;
 				 }
 			 }
@@ -174,7 +176,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		  if(gameState == GameState.MOVE && selectedHeroForMove!=null){
 			  for(Sprite m:moveCells){
 				  if(m.getBoundingRectangle().contains(input.x,input.y)){
-					  selectedHeroForMove.setMapPosition(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
+					  selectedHeroForMove.moveTo(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
 					  selectedHeroForMove.setSelected(false);
 					  selectedHeroForMove = null;
 					  gameState = GameState.FIGHT; 
@@ -282,7 +284,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 					 Gdx.app.debug(TAG, "RIGHT");
 					 //all heros move
 					 for(Hero h:myHeros){
-						 h.setMapPosition(h.getMapX()+1, h.getMapY());
+						 h.moveTo(h.getMapX()+1, h.getMapY());
 					 }
 					 gameState = GameState.FIGHT;
 				 }
@@ -290,7 +292,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 					 Gdx.app.debug(TAG, "LEFT");
 					 //all heros move
 					 for(Hero h:myHeros){
-						 h.setMapPosition(h.getMapX()-1, h.getMapY());
+						 h.moveTo(h.getMapX()-1, h.getMapY());
 					 }
 					 gameState = GameState.FIGHT;
 				 }
@@ -298,7 +300,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 					 Gdx.app.debug(TAG, "DOWN");
 					 //all heros move
 					 for(Hero h:myHeros){
-						 h.setMapPosition(h.getMapX(), h.getMapY()-1);
+						 h.moveTo(h.getMapX(), h.getMapY()-1);
 					 }
 					 gameState = GameState.FIGHT;
 				 }
@@ -306,7 +308,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 					 Gdx.app.debug(TAG, "UP");
 					 //all heros move
 					 for(Hero h:myHeros){
-						 h.setMapPosition(h.getMapX(), h.getMapY()+1);
+						 h.moveTo(h.getMapX(), h.getMapY()+1);
 					 }
 					 gameState = GameState.FIGHT;
 				 }
