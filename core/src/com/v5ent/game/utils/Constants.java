@@ -1,6 +1,5 @@
 package com.v5ent.game.utils;
 
-import com.badlogic.gdx.Gdx;
 
 public class Constants {
 	//1136 x 640

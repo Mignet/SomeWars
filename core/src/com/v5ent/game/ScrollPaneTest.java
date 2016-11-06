@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;  
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
   
 public class ScrollPaneTest extends Game  {  
     private Stage stage;  
