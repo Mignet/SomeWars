@@ -5,17 +5,21 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.v5ent.game.entities.Hero;
 import com.v5ent.game.utils.Constants;
+import com.v5ent.game.utils.GameState;
 
 public class WorldRenderer implements Disposable {
 
 	private static final String TAG = WorldRenderer.class.getName();
 
 	private SpriteBatch batch;
+	private SpriteBatch guiBatch;
 	private WorldController worldController;
 
 	public WorldRenderer (WorldController worldController) {
@@ -60,7 +64,40 @@ public class WorldRenderer implements Disposable {
 			sprite.draw(batch);
 		}
 		batch.end();
+		renderGui(batch);
 	}
+	
+	private void renderGui (SpriteBatch batch) {
+		batch.setProjectionMatrix(worldController.cameraGUI.combined);
+		batch.begin();
+		// draw collected gold coins icon + text
+		// (anchored to top left edge)
+//		renderGuiScore(batch);
+//		// draw collected feather icon (anchored to top left edge)
+//		renderGuiFeatherPowerup(batch);
+//		// draw extra lives icon + text (anchored to top right edge)
+//		renderGuiExtraLive(batch);
+//		// draw FPS text (anchored to bottom right edge)
+//		renderGuiFpsCounter(batch);
+//		// draw game over text
+//		renderGuiGameOverMessage(batch);
+		if(worldController.gameState == GameState.PREPARE){
+			BitmapFont  seconds = new BitmapFont();
+			seconds.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+			seconds.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+			seconds.setScale(4);
+			String s =  worldController.second>0?"Time: "+worldController.second:"Fight!!!";
+			seconds.draw(batch, s, -seconds.getBounds(s).width/2, seconds.getBounds(s).height/2); 
+		}else if(worldController.gameState == GameState.MOVE){
+			BitmapFont  seconds = new BitmapFont();
+			seconds.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+			seconds.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+			seconds.setScale(4);
+			String s =  "YOUR TURN!!!";
+			seconds.draw(batch, s, -seconds.getBounds(s).width/2, seconds.getBounds(s).height/2); 
+		}
+		batch.end();
+		}
 	
 	public void resize (int width, int height) {
 		worldController.camera.viewportWidth = (Constants.VIEWPORT_HEIGHT / height) * width;

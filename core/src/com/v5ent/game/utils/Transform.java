@@ -29,4 +29,12 @@ public class Transform
 		float y = Constants.VIEWPORT_HEIGHT - y1/Constants.RV_RATIO -(Constants.VIEWPORT_HEIGHT/2+offsetY);
 		return new Vector2(MathUtils.floor(x/Constants.CELL_WIDTH),MathUtils.floor(y/Constants.CELL_HEIGHT));
 	}
+	public static int mouseInWorldY(float y1){
+		float y = Constants.VIEWPORT_HEIGHT - y1/Constants.RV_RATIO -(Constants.VIEWPORT_HEIGHT/2+offsetY);
+		return MathUtils.floor(y/Constants.CELL_HEIGHT);
+	}
+	public static int mouseInWorldX(float x1){
+		float x = x1/Constants.RV_RATIO - (Constants.VIEWPORT_WIDTH/2+offsetX) ;
+		return MathUtils.floor(x/Constants.CELL_WIDTH);
+	}
 }
