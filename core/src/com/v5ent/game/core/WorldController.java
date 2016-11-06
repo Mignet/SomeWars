@@ -73,14 +73,14 @@ public class WorldController extends InputAdapter implements GestureListener {
 
 	private void initObjects () {
 		background = new Sprite(Assets.instance.background);
-		background.setSize(background.getWidth()/Constants.RV_RATIO, background.getHeight()/Constants.RV_RATIO);
+		background.setSize(background.getWidth()/Constants.RV_W_RATIO, background.getHeight()/Constants.RV_H_RATIO);
 		// Set origin to sprite's center
-		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
+//		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
 		background.setPosition(-Constants.VIEWPORT_WIDTH/2, -Constants.VIEWPORT_HEIGHT/2);
 		//moveCells
 		// Create new array for 5 sprites
 		myHeros = new ArrayList<Hero>();
-		int myHerosCnt = 3;
+		int myHerosCnt = 1;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < myHerosCnt ; i++) {
@@ -93,7 +93,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 			myHeros.add(spr);
 		}
 		enemyHeros = new ArrayList<Hero>();
-		int yourHerosCnt = 2;
+		int yourHerosCnt = 0;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < yourHerosCnt ; i++) {
@@ -148,14 +148,15 @@ public class WorldController extends InputAdapter implements GestureListener {
 		 Vector3 input = new Vector3(x1, y1, 0);
 		 camera.unproject(input);
 		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
-		 Gdx.app.debug(TAG, "clicked # (" + x1/Constants.RV_RATIO+","+ y1/Constants.RV_RATIO + " )");
-		 Gdx.app.debug(TAG, "clicked # (" +Transform.mouseInWorldX(x1)+","+ Transform.mouseInWorldY(y1)+ " )");
+		 Gdx.app.debug(TAG, "clicked # (" +input.x +","+input.y + " )");
+		 Gdx.app.debug(TAG, "clicked # (" + x1/Constants.RV_W_RATIO+","+ y1/Constants.RV_H_RATIO + " )");
+		 Gdx.app.debug(TAG, "clicked # (" +Transform.mouseInMapX(input.x)+","+ Transform.mouseInMapY(input.y)+ " )");
 		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
 		 //sprite has been clicked
 		  if(gameState == GameState.PREPARE && selectedHeroForPrepare!=null){
 			 for(Sprite m:moveCells){
 				 if(m.getBoundingRectangle().contains(input.x,input.y)){
-					 selectedHeroForPrepare.setMapPosition(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
+					 selectedHeroForPrepare.setMapPosition(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
 					 selectedHeroForPrepare.setSelected(false);
 					 selectedHeroForPrepare = null;
 					 moveCells.clear();
@@ -166,7 +167,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		  if(gameState == GameState.MOVE && selectedHeroForMove!=null){
 			  for(Sprite m:moveCells){
 				  if(m.getBoundingRectangle().contains(input.x,input.y)){
-					  selectedHeroForMove.moveTo(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
+					  selectedHeroForMove.moveTo(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
 					  selectedHeroForMove.setSelected(false);
 					  selectedHeroForMove = null;
 					  gameState = GameState.FIGHT; 
@@ -186,15 +187,15 @@ public class WorldController extends InputAdapter implements GestureListener {
 					 selectedHeroForPrepare  = h;
 					 for(int n=0;n<Constants.MAP_ROWS;n++){
 						 Sprite moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
+						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
 						 moveCell.setPosition(Transform.positionInWorldX(0), Transform.positionInWorldY(n));
 						 moveCells.add(moveCell);
 						 moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
+						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
 						 moveCell.setPosition(Transform.positionInWorldX(1), Transform.positionInWorldY(n));
 						 moveCells.add(moveCell);
 						 moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
+						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
 						 moveCell.setPosition(Transform.positionInWorldX(2), Transform.positionInWorldY(n));
 						 moveCells.add(moveCell);
 					 }
@@ -203,7 +204,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 					 selectedHeroForMove  = h;
 					 for(Vector2 p:h.getMoveRange()){
 						 Sprite moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_RATIO, moveCell.getHeight()/Constants.RV_RATIO);
+						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
 						 moveCell.setPosition(Transform.positionInWorldX(h.getMapX()+p.x), Transform.positionInWorldY(h.getMapY()+p.y));
 						 moveCells.add(moveCell);
 					 }
@@ -220,7 +221,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 				 h.setSelected(true);
 				 for(Vector2 p:h.getFightRange()){
 					 Sprite fightCell =  new Sprite(Assets.instance.fightCell);
-					 fightCell.setSize(fightCell.getWidth()/Constants.RV_RATIO, fightCell.getHeight()/Constants.RV_RATIO);
+					 fightCell.setSize(fightCell.getWidth()/Constants.RV_W_RATIO, fightCell.getHeight()/Constants.RV_H_RATIO);
 					 fightCell.setPosition(Transform.positionInWorldX(h.getMapX()-p.x), Transform.positionInWorldY(h.getMapY()+p.y));
 					 fightCells.add(fightCell);
 				 }
@@ -233,26 +234,11 @@ public class WorldController extends InputAdapter implements GestureListener {
 
 	    @Override
 	    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-	    	int x1 = Gdx.input.getX();
-			 int y1 = Gdx.input.getY();
-			 Vector3 input = new Vector3(x1, y1, 0);
-			 camera.unproject(input);
-			 Gdx.app.debug(TAG, "touchUp # (" + x1+","+ y1 + " )");
-			 Gdx.app.debug(TAG, "touchUp # (" +Transform.mouseInWorld( x1, y1)+ " )");
 	        return true;
 	    }
 
 	    @Override
 	    public boolean touchDragged(int screenX, int screenY, int pointer) {
-	    	int x1 = Gdx.input.getX();
-			 int y1 = Gdx.input.getY();
-			 Vector3 input = new Vector3(x1, y1, 0);
-			 camera.unproject(input);
-			 Gdx.app.debug(TAG, "touchDragged # (" + x1+","+ y1 + " )");
-			 Gdx.app.debug(TAG, "touchDragged # (" +Transform.mouseInWorld( x1, y1)+ " )");
-	        if(gameState == GameState.PREPARE){
-	        	selectedHeroForPrepare.translate(input.x/Constants.RV_RATIO, input.y/Constants.RV_RATIO);
-	        }
 	        return true;
 	    }
 

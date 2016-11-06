@@ -1,5 +1,7 @@
 package com.v5ent.game.utils;
 
+import com.badlogic.gdx.Gdx;
+
 public class Constants {
 	//1136 x 640
 	// Visible game world is 16 meters wide
@@ -9,11 +11,12 @@ public class Constants {
 	public static final float VIEWPORT_HEIGHT = 9.0f;
 	
 	//屏幕比率
-	public static final float RV_RATIO= 71.0f;
+	public static float RV_W_RATIO= 1136f/VIEWPORT_WIDTH;
+	public static float RV_H_RATIO = 640f/VIEWPORT_HEIGHT;
 	// Cell is 5 meters wide
-	public static final float CELL_WIDTH = 90.f/71.0f;
+	public static final float CELL_WIDTH = 90.f/RV_W_RATIO;
 	// Cell is 5 meters tall
-	public static final float CELL_HEIGHT = 70.f/71.0f;
+	public static final float CELL_HEIGHT = 70.f/RV_H_RATIO;
 	// Cell is 5 meters wide
 	public static final int MAP_ROWS = 7;
 	// Cell is 5 meters tall

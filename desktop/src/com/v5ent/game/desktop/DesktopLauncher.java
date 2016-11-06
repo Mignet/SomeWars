@@ -12,7 +12,7 @@ public class DesktopLauncher {
 		cfg.title = "Some Wars";
 		cfg.useGL20 = true;
 		cfg.width = 1136;
-		cfg.height = 640;
+		cfg.height = 768;
 		Gdx.app  = new LwjglApplication(new SomeWars(), cfg);
 		 //Gdx.app.setLogLevel(Application.LOG_INFO);
 		 Gdx.app.setLogLevel(Application.LOG_DEBUG);

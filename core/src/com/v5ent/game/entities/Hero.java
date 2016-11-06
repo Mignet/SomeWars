@@ -78,7 +78,7 @@ public class Hero extends Sprite{
 		walkRightAnimation = ah.walkRightAnimation;
 		currentFrame =idleRightAnimation.getKeyFrame(0);
 		// Define sprite size to be 1m x 1m in game world
-		this.setSize(currentFrame.getRegionWidth()/Constants.RV_RATIO, currentFrame.getRegionHeight()/Constants.RV_RATIO);
+		this.setSize(currentFrame.getRegionWidth()/Constants.RV_W_RATIO, currentFrame.getRegionHeight()/Constants.RV_H_RATIO);
 		// Set origin to sprite's center
 		this.setOrigin(this.getWidth() / 2.0f, 0);
 		nextPosition = new Vector2(this.getX(),this.getY());
