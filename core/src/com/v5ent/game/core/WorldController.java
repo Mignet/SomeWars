@@ -28,7 +28,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 	
 	public Sprite background;
 	public GameState gameState;
-	public int second = 20; 
+	public int second = 5; 
 	
 	public List<Sprite> moveCells = new ArrayList<Sprite>();
 	public List<Sprite> fightCells = new ArrayList<Sprite>();
@@ -52,7 +52,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 	        	 	}
 	            }
 	        };
-	    timer.scheduleTask(timerTask, 0, 1, 20);// 0s之后执行，每次间隔1s，执行20次。
+	    timer.scheduleTask(timerTask, 0, 1, second);// 0s之后执行，每次间隔1s，执行20次。
 		init();
 	}
 
@@ -80,20 +80,20 @@ public class WorldController extends InputAdapter implements GestureListener {
 		//moveCells
 		// Create new array for 5 sprites
 		myHeros = new ArrayList<Hero>();
-		int myHerosCnt = 5;
+		int myHerosCnt = 3;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < myHerosCnt ; i++) {
 //			create hero by id
 			Hero spr = new Hero("001");
 			// Calculate random position for sprite
-			spr.moveTo(1, i);
+			spr.setMapPosition(1, i+2);
 			spr.setGood(true);
 			// Put new sprite into array
 			myHeros.add(spr);
 		}
 		enemyHeros = new ArrayList<Hero>();
-		int yourHerosCnt = 3;
+		int yourHerosCnt = 2;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < yourHerosCnt ; i++) {
@@ -101,7 +101,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 			Hero spr = new Hero("002");
 			spr.setGood(false);
 			// Calculate random position for sprite
-			spr.moveTo(Constants.MAP_COLS-1-i, 3);
+			spr.setMapPosition(Constants.MAP_COLS-1-i, 3);
 			// Put new sprite into array
 			enemyHeros.add(spr);
 		}
@@ -116,12 +116,6 @@ public class WorldController extends InputAdapter implements GestureListener {
 			for(Hero h:enemyHeros){
 				h.moveTo(h.getMapX()-1, h.getMapY());
 			}
-			//
-			/*try {
-				Thread.sleep(5000l);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}*/
 			gameState = GameState.MOVE;
 		}
 	}
@@ -134,10 +128,6 @@ public class WorldController extends InputAdapter implements GestureListener {
 			enemyHeros.get(i).update(deltaTime);
 		}
 	}
-/*
-	private void moveSelectedSprite (float x, float y) {
-		myHeros.get(selectedIndex).translate(x, y);
-	}*/
 
 	@Override
 	public boolean keyUp (int keycode) {
@@ -165,7 +155,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		  if(gameState == GameState.PREPARE && selectedHeroForPrepare!=null){
 			 for(Sprite m:moveCells){
 				 if(m.getBoundingRectangle().contains(input.x,input.y)){
-					 selectedHeroForPrepare.moveTo(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
+					 selectedHeroForPrepare.setMapPosition(Transform.mouseInWorldX( x1), Transform.mouseInWorldY(y1));
 					 selectedHeroForPrepare.setSelected(false);
 					 selectedHeroForPrepare = null;
 					 moveCells.clear();

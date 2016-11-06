@@ -19,6 +19,16 @@ public class Transform
 	public static float positionInWorldY(float y){
 		return offsetY+y*Constants.CELL_HEIGHT;
 	}
+	//真实精灵坐标到地图
+	/*public Vector2 positionInMap(float x,float y){
+		return new Vector2(positionInMapX(x),positionInMapY(y));
+	}
+	public static int positionInMapX(float x){
+		return MathUtils.floor((x - offsetX)/Constants.CELL_WIDTH);
+	}
+	public static int positionInMapY(float y){
+		return MathUtils.floor((y - offsetY)/Constants.CELL_HEIGHT);
+	}*/
 	
 	public static Vector2 mouseInWorld(Vector2 position){
 		return mouseInWorld(position.x,position.y);

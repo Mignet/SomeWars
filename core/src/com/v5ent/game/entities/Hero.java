@@ -3,6 +3,7 @@ package com.v5ent.game.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -54,7 +55,7 @@ public class Hero extends Sprite{
 	private Direction currentDir = Direction.RIGHT;
 	private Vector2 nextPosition;
 	/** 速度 */
-	private float speed = Constants.RV_RATIO;//一格一秒
+	private float speed = 1f;//一格一秒
 	//LVL - The tile's level. The tiles level up when it gain some experience.
 	private int	level = 1;
 	//STR - The tile's Strength. Strength affects the damages.
@@ -80,6 +81,7 @@ public class Hero extends Sprite{
 		this.setSize(currentFrame.getRegionWidth()/Constants.RV_RATIO, currentFrame.getRegionHeight()/Constants.RV_RATIO);
 		// Set origin to sprite's center
 		this.setOrigin(this.getWidth() / 2.0f, 0);
+		nextPosition = new Vector2(this.getX(),this.getY());
 		good = true;
 		moveRange.add(new Vector2(0,1));
 		moveRange.add(new Vector2(0,-1));
@@ -91,10 +93,22 @@ public class Hero extends Sprite{
 		fightRange.add(new Vector2(1,-1));
 		fightRange.add(new Vector2(0,-2));
 	}
-	
+	float elapsed = 0.01f;
+	/** 需要移动到的目标位置**/
+	private float targetX;
+	private float targetY;
+	private int targetMapX;
+	private int targetMapY;
 	public void update(float delta) {
 		frameTime = (frameTime + delta) % 4; // Want to avoid overflow
-		
+		if(this.currentState==State.WALKING){
+			calculateNextPosition(delta);
+			setNextPositionToCurrent();
+			if(Math.abs(this.nextPosition.x-this.targetX)<speed*delta && Math.abs(this.nextPosition.y-this.targetY)<speed*delta){
+				this.currentState= State.IDLE;
+				this.setMapPosition(targetMapX,targetMapY);
+			}
+		}
 	}
 	
 	@Override
@@ -135,16 +149,17 @@ public class Hero extends Sprite{
 			break;
 		}
 	}
-
+	//当没有障碍物时使用
 	public void setNextPositionToCurrent() {
 		setPosition(nextPosition.x, nextPosition.y);
+//		setMapPosition(Transform.positionInMapX(nextPosition.x),Transform.positionInMapY(nextPosition.y));
 	}
 
-	public void calculateNextPosition(Direction currentDirection, float deltaTime) {
+	public void calculateNextPosition(float deltaTime) {
 		float testX = this.getX();
 		float testY = this.getY();
-//		speed *=(deltaTime);
-		switch (currentDirection) {
+		speed *=(deltaTime);
+		switch (currentDir) {
 		case LEFT:
 			testX -= speed;
 			break;
@@ -162,8 +177,9 @@ public class Hero extends Sprite{
 		}
 		nextPosition.x = testX;
 		nextPosition.y = testY;
+		Gdx.app.debug(TAG, "nextPosition:"+nextPosition);
 		// velocity
-//		speed *=(1 / deltaTime);
+		speed *=(1 / deltaTime);
 	}
 	
 	public int getMapX() {
@@ -246,9 +262,25 @@ public class Hero extends Sprite{
 	}
 
 	public void moveTo(int x, int y) {
-		this.mapX = x;
-		this.mapY = y;
-		this.setPosition(Transform.positionInWorldX(x), Transform.positionInWorldY(y));
+		if(x>mapX){
+			currentDir = Direction.RIGHT;
+		}
+		if(x<mapX){
+			currentDir = Direction.LEFT;
+		}
+		if(y>mapY){
+			currentDir = Direction.UP;
+		}
+		if(y<mapY){
+			currentDir = Direction.DOWN;
+		}
+		Gdx.app.debug(TAG, "("+this.mapX+","+this.mapY+") move to:("+x+","+y+")"+currentDir);
+		this.currentState=State.WALKING;
+		this.targetMapX = x;
+		this.targetMapY = y;
+		this.targetX = Transform.positionInWorldX(x);
+		this.targetY = Transform.positionInWorldY(y);
+		Gdx.app.debug(TAG, "("+this.getX()+","+this.getY()+") move to target:("+this.targetX+","+this.targetY+")");
 	}
 	
 }
