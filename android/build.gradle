@@ -1,6 +1,6 @@
 android {
-    buildToolsVersion "19.1.0"
-    compileSdkVersion 19
+    buildToolsVersion "24.0.2"
+    compileSdkVersion 24
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -12,6 +12,11 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+    defaultConfig {
+        applicationId "com.v5ent.game"
+        minSdkVersion 8
+        targetSdkVersion 24
     }
 }
 
