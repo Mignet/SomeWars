@@ -44,7 +44,7 @@ public class LoginGameScreen implements Screen {
 		Label profileName = new Label("请输入您的用户名: ", Assets.instance.STATUSUI_SKIN);
 		account  = new TextField("",Assets.instance.STATUSUI_SKIN, "inventory");
 		account.setMaxLength(20);
-		account.setMessageText(gameIns.prefs.getString("account", "test"));
+//		account.setMessageText(gameIns.prefs.getString("account", "test"));
 		/*account.addListener(new ClickListener(){
 	        public void clicked(InputEvent e, float x, float y) {
 	            //perform some action once it is clicked.

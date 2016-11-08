@@ -16,13 +16,13 @@ public class SomeWars extends Game {
 	 public PrepareScreen prepareScreen;
 	 public MainGameScreen mainGameScreen;
 	 public GameOverScreen gameoverScreen;
-	 public Preferences prefs ;
+//	 public Preferences prefs ;
 	
 	@Override
 	public void create() {
 		// Load assets
 		Assets.instance.init(new AssetManager());
-		prefs = Gdx.app.getPreferences("Preferences");
+//		prefs = Gdx.app.getPreferences("Preferences");
 		loginGameScreen = new LoginGameScreen(this);
 		prepareScreen = new PrepareScreen(this);
 		mainGameScreen = new MainGameScreen(this);

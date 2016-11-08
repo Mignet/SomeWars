@@ -42,15 +42,15 @@ public class Assets implements Disposable, AssetErrorListener {
 
 		public AssetHero (TextureAtlas atlas) {
 			Array<TextureRegion> idleRightFrames = new Array<TextureRegion>(4);
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 6; i++) {
 				idleRightFrames.insert(i, atlas.findRegion("idleRight"+i));
 			}
-			idleRightAnimation = new Animation(0.25f, idleRightFrames, Animation.PlayMode.LOOP);
+			idleRightAnimation = new Animation(1/6f, idleRightFrames, Animation.PlayMode.LOOP);
 			Array<TextureRegion> walkRightFrames = new Array<TextureRegion>(4);
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 5; i++) {
 				walkRightFrames.insert(i, atlas.findRegion("walkRight"+i));
 			}
-			walkRightAnimation = new Animation(0.25f, walkRightFrames, Animation.PlayMode.LOOP);
+			walkRightAnimation = new Animation(0.2f, walkRightFrames, Animation.PlayMode.LOOP);
 		}
 	}
 

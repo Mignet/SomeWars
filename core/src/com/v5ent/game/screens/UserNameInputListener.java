@@ -14,8 +14,8 @@ public class UserNameInputListener implements TextInputListener {
 
 	@Override
 	   public void input (String text) {
-			game.prefs.putString("account", text);
-			game.prefs.flush();
+//			game.prefs.putString("account", text);
+//			game.prefs.flush();
 		   Gdx.app.debug(TAG , text);
 	   }
 

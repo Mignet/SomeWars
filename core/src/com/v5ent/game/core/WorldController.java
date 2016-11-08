@@ -98,7 +98,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		// Create new sprites using a random texture region
 		for (int i = 0; i < yourHerosCnt ; i++) {
 //			create hero by id
-			Hero spr = new Hero("002");
+			Hero spr = new Hero("001");
 			spr.setGood(false);
 			// Calculate random position for sprite
 			spr.setMapPosition(Constants.MAP_COLS-1-i, 3);

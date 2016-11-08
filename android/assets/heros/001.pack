@@ -2,59 +2,80 @@
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+idleRight5
+  rotate: false
+  xy: 2, 538
+  size: 100, 86
+  orig: 200, 200
+  offset: 51, 13
+  index: -1
 walkRight0
   rotate: false
-  xy: 98, 2
-  size: 94, 92
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 268
+  size: 114, 88
+  orig: 200, 200
+  offset: 44, 16
   index: -1
 idleRight0
   rotate: false
-  xy: 98, 96
-  size: 94, 92
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 808
+  size: 98, 88
+  orig: 200, 200
+  offset: 52, 13
   index: -1
 walkRight2
   rotate: false
-  xy: 98, 2
-  size: 94, 92
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 180
+  size: 116, 86
+  orig: 200, 200
+  offset: 44, 15
   index: -1
 walkRight1
   rotate: false
-  xy: 2, 102
-  size: 94, 92
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 2
+  size: 116, 88
+  orig: 200, 200
+  offset: 43, 15
   index: -1
 idleRight1
   rotate: false
-  xy: 2, 2
-  size: 94, 98
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 718
+  size: 98, 88
+  orig: 200, 200
+  offset: 52, 13
+  index: -1
+walkRight4
+  rotate: false
+  xy: 2, 358
+  size: 112, 86
+  orig: 200, 200
+  offset: 46, 15
   index: -1
 walkRight3
   rotate: false
-  xy: 2, 102
-  size: 94, 92
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 92
+  size: 116, 86
+  orig: 200, 200
+  offset: 43, 12
   index: -1
 idleRight2
   rotate: false
-  xy: 98, 96
-  size: 94, 92
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 898
+  size: 96, 90
+  orig: 200, 200
+  offset: 54, 13
+  index: -1
+idleRight4
+  rotate: false
+  xy: 2, 446
+  size: 100, 90
+  orig: 200, 200
+  offset: 51, 13
   index: -1
 idleRight3
   rotate: false
-  xy: 2, 2
-  size: 94, 98
-  orig: 110, 160
-  offset: 13, 21
+  xy: 2, 626
+  size: 98, 90
+  orig: 200, 200
+  offset: 53, 13
   index: -1
