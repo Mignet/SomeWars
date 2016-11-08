@@ -1,28 +1,26 @@
 package com.v5ent.game;
 
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.v5ent.game.entities.Starship;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-import java.util.HashMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.JSONObject;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.utils.Json;
-import com.v5ent.game.entities.Starship;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.Game;
-
-public class MultiplayerDemo extends Game {
+public class MultiplayerDemo extends ApplicationAdapter {
 	SpriteBatch batch;
 	private Socket socket;
 	String id;
@@ -30,7 +28,6 @@ public class MultiplayerDemo extends Game {
 	Texture playerShip;
 	Texture friendlyShip;
 	HashMap<String, Starship> friendlyPlayers;
-	Json json = new Json();
 
 	@Override
 	public void create () {
@@ -98,27 +95,35 @@ public class MultiplayerDemo extends Game {
 		}).on("socketID", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				String id =((org.json.JSONObject)(args[0])).getString("id");
-				Gdx.app.log("SocketIO", "My ID: " + id);
+				JSONObject data = (JSONObject) args[0];
+				try {
+
+					id = data.getString("id");
+					Gdx.app.log("SocketIO", "My ID: " + id);
+				} catch (JSONException e) {
+					Gdx.app.log("SocketIO", "Error getting ID");
+				}
 			}
 		}).on("newPlayer", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				String id =((org.json.JSONObject)(args[0])).getString("id");
+				JSONObject data = (JSONObject) args[0];
 				try {
+					id = data.getString("id");
 					Gdx.app.log("SocketIO", "New Player Connect: " + id);
 					friendlyPlayers.put(id, new Starship(friendlyShip));
-				}catch(Exception e){
+				}catch(JSONException e){
 					Gdx.app.log("SocketIO", "Error getting New PlayerID");
 				}
 			}
 		}).on("playerDisconnected", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				String id =((org.json.JSONObject)(args[0])).getString("id");
+				JSONObject data = (JSONObject) args[0];
 				try {
+					id = data.getString("id");
 					friendlyPlayers.remove(id);
-				}catch(Exception e){
+				}catch(JSONException e){
 					Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
 				}
 			}

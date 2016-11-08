@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -27,7 +28,7 @@ public class Hero extends Sprite{
 	}
 
 	public enum Direction {
-		UP,DOWN,RIGHT, LEFT;
+		UP,DOWN,RIGHT, LEFT
 	}
 	
 	private String id;
@@ -112,7 +113,7 @@ public class Hero extends Sprite{
 	}
 	
 	@Override
-		public void draw(SpriteBatch batch) {
+		public void draw(Batch batch) {
 	//		super.draw(batch);
 			TextureRegion reg = null;
 	

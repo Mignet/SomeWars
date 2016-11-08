@@ -85,16 +85,16 @@ public class WorldRenderer implements Disposable {
 			BitmapFont  seconds = new BitmapFont();
 			seconds.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			seconds.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-			seconds.setScale(4);
+//			seconds.setScale(4);
 			String s =  worldController.second>0?"Time: "+worldController.second:"Fight!!!";
-			seconds.draw(batch, s, -seconds.getBounds(s).width/2, seconds.getBounds(s).height/2); 
+			seconds.draw(batch, s, -10,-2);
 		}else if(worldController.gameState == GameState.MOVE){
 			BitmapFont  seconds = new BitmapFont();
 			seconds.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			seconds.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-			seconds.setScale(4);
+//			seconds.setScale(4);
 			String s =  "YOUR TURN!!!";
-			seconds.draw(batch, s, -seconds.getBounds(s).width/2, seconds.getBounds(s).height/2); 
+			seconds.draw(batch, s,  -10,-2);
 		}
 		batch.end();
 		}

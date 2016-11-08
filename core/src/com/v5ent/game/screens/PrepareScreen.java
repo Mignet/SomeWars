@@ -34,7 +34,7 @@ public class PrepareScreen implements Screen {
   
     public PrepareScreen(SomeWars game) {  
     	gameIns = game;
-    	stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),false);
+    	stage = new Stage();
         Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));  
         Gdx.input.setInputProcessor(stage);  
         // Gdx.graphics.setVSync(false);  
@@ -118,7 +118,7 @@ public class PrepareScreen implements Screen {
 
 	@Override
     public void resize (int width, int height) {  
-        stage.setViewport(width, height, false);  
+        stage.getViewport().setScreenSize(width, height);
     }  
   
     @Override
@@ -131,7 +131,8 @@ public class PrepareScreen implements Screen {
 		 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);  
 	        stage.act(delta);  
 	        stage.draw();  
-	        Table.drawDebug(stage);  
+//	        Table.drawDebug(stage);
+		stage.setDebugAll(true);
 	}
 
 	@Override

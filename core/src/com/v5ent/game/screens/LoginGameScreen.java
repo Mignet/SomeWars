@@ -100,7 +100,7 @@ public class LoginGameScreen implements Screen {
 									public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
 										//TODO:
 										Gdx.app.debug(TAG, "连接服务器，校验密码..登录...");
-										account.setText(gameIns.prefs.getString("account"));
+//										account.setText(gameIns.prefs.getString("account"));
 										String messageText = account.getText();
 										//如果什么都没有输入，直接返回
 										if("".equals(messageText.trim()))return;
@@ -143,7 +143,7 @@ public class LoginGameScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.setViewport(width, height,false);
+		stage.getViewport().setScreenSize(width, height);
 	}
 
 	@Override

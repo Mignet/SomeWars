@@ -80,7 +80,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 		//moveCells
 		// Create new array for 5 sprites
 		myHeros = new ArrayList<Hero>();
-		int myHerosCnt = 1;
+		int myHerosCnt = 4;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < myHerosCnt ; i++) {
@@ -93,7 +93,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 			myHeros.add(spr);
 		}
 		enemyHeros = new ArrayList<Hero>();
-		int yourHerosCnt = 0;
+		int yourHerosCnt = 2;
 		// Create a list of texture regions
 		// Create new sprites using a random texture region
 		for (int i = 0; i < yourHerosCnt ; i++) {
@@ -297,7 +297,12 @@ public class WorldController extends InputAdapter implements GestureListener {
 			return false;
 		}
 
-		@Override
+	@Override
+	public boolean panStop(float x, float y, int pointer, int button) {
+		return false;
+	}
+
+	@Override
 		public boolean zoom(float initialDistance, float distance) {
 			return false;
 		}

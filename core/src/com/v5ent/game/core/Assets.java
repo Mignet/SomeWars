@@ -45,12 +45,12 @@ public class Assets implements Disposable, AssetErrorListener {
 			for (int i = 0; i < 4; i++) {
 				idleRightFrames.insert(i, atlas.findRegion("idleRight"+i));
 			}
-			idleRightAnimation = new Animation(0.25f, idleRightFrames, Animation.LOOP);
+			idleRightAnimation = new Animation(0.25f, idleRightFrames, Animation.PlayMode.LOOP);
 			Array<TextureRegion> walkRightFrames = new Array<TextureRegion>(4);
 			for (int i = 0; i < 4; i++) {
 				walkRightFrames.insert(i, atlas.findRegion("walkRight"+i));
 			}
-			walkRightAnimation = new Animation(0.25f, walkRightFrames, Animation.LOOP);
+			walkRightAnimation = new Animation(0.25f, walkRightFrames, Animation.PlayMode.LOOP);
 		}
 	}
 
@@ -95,7 +95,7 @@ public class Assets implements Disposable, AssetErrorListener {
 
 	@Override
 	public void error(AssetDescriptor assetDesc, Throwable throwable) {
-		Gdx.app.error(TAG, "Couldn't load asset '" + assetDesc.fileName + "'", (Exception)throwable);
+		Gdx.app.error(TAG, "Couldn't load asset '" + assetDesc.fileName + "'", throwable);
 	}
 
 }

@@ -92,7 +92,7 @@ public class MainMenuScreen implements InputProcessor,Screen{
 
 	@Override
 	public void resize(int width, int height) {
-		stage.setViewport(width, height,false);
+		stage.getViewport().setScreenSize(width, height);
 	}
 
 	@Override
