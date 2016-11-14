@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Transform
 {
-    private static final float offsetX = - 6.97f;
-    private static final float offsetY = - 3.75f;
+    private static final float offsetX = - 6.90f;
+    private static final float offsetY = - 3.40f;
     public Vector2 positionInWorld(Vector2 position){
 		return positionInWorld(position.x,position.y);
 	}
