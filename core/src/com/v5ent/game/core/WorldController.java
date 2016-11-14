@@ -109,7 +109,6 @@ public class WorldController extends InputAdapter implements GestureListener {
 	}
 
 	public void update (float deltaTime) {
-//		handleDebugInput(deltaTime);
 		updateObjects(deltaTime);
 		if(gameState == GameState.FIGHT){
 			//TODO: command
