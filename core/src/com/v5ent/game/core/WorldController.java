@@ -87,7 +87,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 //			create hero by id
 			Hero spr = new Hero("001");
 			// Calculate random position for sprite
-			spr.setMapPosition(1, i+2);
+			spr.setMapPosition(1, i+1);
 			spr.setGood(true);
 			// Put new sprite into array
 			myHeros.add(spr);
@@ -109,6 +109,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 	}
 
 	public void update (float deltaTime) {
+//		handleDebugInput(deltaTime);
 		updateObjects(deltaTime);
 		if(gameState == GameState.FIGHT){
 			//TODO: command
