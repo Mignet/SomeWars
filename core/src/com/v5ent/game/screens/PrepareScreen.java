@@ -151,8 +151,8 @@ public class PrepareScreen implements Screen {
 
 	@Override
 	public void hide() {
-//		Gdx.input.setInputProcessor(null);
-		stage.dispose();
+		Gdx.input.setInputProcessor(null);
+//		stage.dispose();
 	}
 
 	@Override
