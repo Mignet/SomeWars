@@ -3,6 +3,7 @@ package com.potato;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -26,14 +27,14 @@ public class Mario extends Actor {
 	Animation aniRight;
 	Animation aniLeft;
 	Animation aniIdle;
-	
-	
+
+
 	public static int LeftState  = 1;
 	public static int IdeltState = 2;
 	public static int RightState = 3;
 	public static int state = 2;
 
-	
+
 	public Mario(float x, float y) {
 		this.x = x;
 		this.y = y;
@@ -51,19 +52,19 @@ public class Mario extends Actor {
 			}
 		}
 
-		// ”“
+		// Âè≥
 		TextureRegion[] regionR = new TextureRegion[3];
 		regionR[0] = spilt[0][1];
 		regionR[1] = spilt[0][2];
 		regionR[2] = spilt[0][0];
 		aniRight = new Animation(0.1f, regionR);
-		// ◊Û
+		// Â∑¶
 		TextureRegion[] regionL = new TextureRegion[3];
 		regionL[0] = miror[0][1];
 		regionL[1] = miror[0][2];
 		regionL[2] = miror[0][0];
 		aniLeft = new Animation(0.1f, regionL);
-		// ø’œ–
+		// Á©∫Èó≤
 		TextureRegion[] regionI = new TextureRegion[1];
 		regionI[0] = spilt[0][0];
 
@@ -81,14 +82,14 @@ public class Mario extends Actor {
 
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
-					int pointer, int button) {
+								int pointer, int button) {
 				state = IdeltState;
 				super.touchUp(event, x, y, pointer, button);
 			}
 
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
+									 int pointer, int button) {
 				state = LeftState;
 				return true;
 			}
@@ -97,7 +98,7 @@ public class Mario extends Actor {
 		buttonR.addListener(new InputListener() {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
-					int pointer, int button) {
+								int pointer, int button) {
 				// TODO Auto-generated method stub
 				state = IdeltState;
 				super.touchUp(event, x, y, pointer, button);
@@ -105,7 +106,7 @@ public class Mario extends Actor {
 
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
+									 int pointer, int button) {
 				// TODO Auto-generated method stub
 				state = RightState;
 				return true;
@@ -114,7 +115,7 @@ public class Mario extends Actor {
 		});
 
 	}
-	
+
 	public void update(){
 		if(state == LeftState){
 			this.x -=1.5f;
@@ -125,7 +126,7 @@ public class Mario extends Actor {
 		}
 		this.x = x;
 	}
-	
+
 	public void aniCheck(){
 		if(state == LeftState){
 			currentFrame = aniLeft.getKeyFrame(statetime, true);
@@ -135,15 +136,15 @@ public class Mario extends Actor {
 			currentFrame = aniIdle.getKeyFrame(statetime,true);
 		}
 	}
-	
-	
+
+
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
-			statetime+=Gdx.graphics.getDeltaTime();
-			this.update();
-			this.aniCheck();
-			
-			batch.draw(currentFrame, x, y);
+	public void draw(Batch batch, float parentAlpha) {
+		statetime+=Gdx.graphics.getDeltaTime();
+		this.update();
+		this.aniCheck();
+
+		batch.draw(currentFrame, x, y);
 	}
 
 	@Override

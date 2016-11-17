@@ -8,11 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-import static sun.plugin.javascript.navig.JSType.Image;
-
 public class GameStage extends Stage {
 
-	// ����ͼƬ��ͼ->backdrop;
 	Image backdrop;
 	Mario mario;
 	Texture texture;
