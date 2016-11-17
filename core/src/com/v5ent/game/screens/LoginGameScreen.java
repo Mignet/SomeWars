@@ -103,11 +103,11 @@ public class LoginGameScreen implements Screen {
 //										account.setText(gameIns.prefs.getString("account"));
 										String messageText = account.getText();
 										//如果什么都没有输入，直接返回
-										if("".equals(messageText.trim()))return;
+//										if("".equals(messageText.trim()))return;
 										//check to see if the current profile matches one that already exists
 										boolean exists = false;
 //										gameIns.setScreen(gameIns.prepareScreen);
-										gameIns.setScreen(gameIns.mainGameScreen);
+										gameIns.setScreen(gameIns.prepareScreen);
 									}
 								}
 		);
