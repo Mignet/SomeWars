@@ -54,7 +54,7 @@ public class PrepareScreen implements Screen {
 		myHeros.add(new Hero("002"));
 		for (int i = 0; i < 40; i++) {
 			rightTable.row();
-			final CheckBox checkBox = new CheckBox("Hero:"+padZero(i+1)+(i+1), skin);
+			final HeroCheckBox checkBox = new HeroCheckBox("Hero:"+padZero(i+1)+(i+1), skin);
 			checkBox.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
