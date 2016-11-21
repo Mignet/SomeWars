@@ -2,6 +2,13 @@
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+idleRight5
+  rotate: false
+  xy: 2, 2
+  size: 54, 108
+  orig: 110, 160
+  offset: 26, 21
+  index: -1
 walkRight0
   rotate: false
   xy: 58, 108
@@ -44,7 +51,21 @@ walkRight3
   orig: 110, 160
   offset: 26, 21
   index: -1
+walkRight5
+  rotate: false
+  xy: 58, 2
+  size: 54, 104
+  orig: 110, 160
+  offset: 26, 21
+  index: -1
 idleRight2
+  rotate: false
+  xy: 2, 112
+  size: 54, 104
+  orig: 110, 160
+  offset: 26, 21
+  index: -1
+idleRight4
   rotate: false
   xy: 2, 112
   size: 54, 104

@@ -44,7 +44,7 @@ public class LoginGameScreen implements Screen {
 		Label profileName = new Label("请输入您的用户名: ", Assets.instance.STATUSUI_SKIN);
 		account  = new TextField("",Assets.instance.STATUSUI_SKIN, "inventory");
 		account.setMaxLength(20);
-//		account.setMessageText(gameIns.prefs.getString("account", "test"));
+		account.setMessageText("test");
 		/*account.addListener(new ClickListener(){
 	        public void clicked(InputEvent e, float x, float y) {
 	            //perform some action once it is clicked.
@@ -54,7 +54,7 @@ public class LoginGameScreen implements Screen {
 		});*/
 		// configures an example of a TextField in password mode.
 		Label profilePwd = new Label("请输入您的密码: ", Assets.instance.STATUSUI_SKIN);
-		password  = new TextField("",Assets.instance.STATUSUI_SKIN, "inventory");
+		password  = new TextField("test",Assets.instance.STATUSUI_SKIN, "inventory");
 		password.setMaxLength(20);
 //		password.setMessageText("password");
 		password.setPasswordCharacter('*');
@@ -83,7 +83,7 @@ public class LoginGameScreen implements Screen {
 		bottomTable.setHeight(startButton.getHeight());
 		bottomTable.setWidth(Gdx.graphics.getWidth());
 		bottomTable.center();
-		bottomTable.add(startButton).padBottom(60);
+		bottomTable.add(startButton).padBottom(120);
 //		bottomTable.add(backButton);
 
 		stage.addActor(topTable);

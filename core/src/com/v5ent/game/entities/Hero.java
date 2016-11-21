@@ -18,6 +18,7 @@ import com.v5ent.game.utils.Transform;
 public class Hero extends Sprite{
 	
 	private static final String TAG = Hero.class.getName();
+
 	/**---待机、行走、施法、攻击、被打、死亡、僵直---**/
 	public enum State {
 		IDLE, WALKING,MAGIC,FIGHT,BEATEN,DEAD,STIFF
@@ -61,22 +62,38 @@ public class Hero extends Sprite{
 	private int	level = 1;
 	//STR - The tile's Strength. Strength affects the damages.
 	private int	strength = 100;
+
 	private int	life = 100;
 	private int	maxlife = 100;
 	//DEF - The tile's defence. It represents avarage defence against physical attack.
 	//The tiles also have magic deffence.
 	private int	defend = 50;
+
+	public int getDexterity() {
+		return dexterity;
+	}
+
+	public void setDexterity(int dexterity) {
+		this.dexterity = dexterity;
+	}
+
 	//DEXterity - decide the order of actions
 	private int	dexterity = 20;
 	
 	private Animation idleRightAnimation;
 	private Animation walkRightAnimation;
-//	private Animation walkRightAnimation;
+	private Animation fightRightAnimation;
+	private Animation beatenRightAnimation;
+	private Animation magicAnimation;
 
 	public Hero(String id) {
 		AssetHero ah = Assets.instance.assetHeros.get(id);
 		idleRightAnimation = ah.idleRightAnimation;
 		walkRightAnimation = ah.walkRightAnimation;
+		fightRightAnimation = ah.fightRightAnimation;
+		beatenRightAnimation = ah.beatenRightAnimation;
+		//--->hit
+		magicAnimation = ah.magicRightAnimation;
 		currentFrame =idleRightAnimation.getKeyFrame(0);
 		// Define sprite size to be 1m x 1m in game world
 		this.setSize(currentFrame.getRegionWidth()/Constants.RV_W_RATIO, currentFrame.getRegionHeight()/Constants.RV_H_RATIO);
@@ -88,11 +105,10 @@ public class Hero extends Sprite{
 		moveRange.add(new Vector2(0,-1));
 		moveRange.add(new Vector2(1,0));
 		moveRange.add(new Vector2(-1,0));
-		fightRange.add(new Vector2(0,2));
-		fightRange.add(new Vector2(1,1));
-		fightRange.add(new Vector2(2,0));
-		fightRange.add(new Vector2(1,-1));
-		fightRange.add(new Vector2(0,-2));
+		fightRange.add(new Vector2(0,1));
+		fightRange.add(new Vector2(0,-1));
+		fightRange.add(new Vector2(1,0));
+		fightRange.add(new Vector2(-1,0));
 	}
 	float elapsed = 0.01f;
 	/** 需要移动到的目标位置**/
@@ -101,7 +117,7 @@ public class Hero extends Sprite{
 	private int targetMapX;
 	private int targetMapY;
 	public void update(float delta) {
-		frameTime = (frameTime + delta) % 4; // Want to avoid overflow
+		frameTime = (frameTime + delta) % 7; // Want to avoid overflow
 		if(this.currentState==State.WALKING){
 			calculateNextPosition(delta);
 			setNextPositionToCurrent();
@@ -136,14 +152,39 @@ public class Hero extends Sprite{
 			batch.setColor(1, 1, 1, 1);
 		}
 
+	public int getTargetMapX() {
+		return targetMapX;
+	}
+
+	public int getTargetMapY() {
+		return targetMapY;
+	}
+
+	public void setCurrentState(State currentState) {
+		this.currentState = currentState;
+	}
+
 	public void updateCurrentFrame() {
 		// Look into the appropriate variable when changing position
 		switch (currentState) {
+
 		case IDLE:
 			currentFrame = idleRightAnimation.getKeyFrame(frameTime);
 			break;
 		case WALKING:
 			currentFrame = walkRightAnimation.getKeyFrame(frameTime);
+			break;
+		case FIGHT:
+			currentFrame = fightRightAnimation.getKeyFrame(frameTime);
+			if(fightRightAnimation.isAnimationFinished(frameTime)){
+				currentState = State.IDLE;
+			}
+			break;
+		case BEATEN:
+			currentFrame = beatenRightAnimation.getKeyFrame(frameTime);
+			if(beatenRightAnimation.isAnimationFinished(frameTime)){
+				currentState = State.IDLE;
+			}
 			break;
 		default:
 			currentFrame = idleRightAnimation.getKeyFrame(frameTime);
@@ -236,7 +277,13 @@ public class Hero extends Sprite{
 	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
+	public int getLife() {
+		return life;
+	}
 
+	public void setLife(int life) {
+		this.life = life;
+	}
 	/**
 	 * @return the good
 	 */
@@ -274,13 +321,36 @@ public class Hero extends Sprite{
 		if(y<mapY){
 			currentDir = Direction.DOWN;
 		}
-		Gdx.app.debug(TAG, "("+this.mapX+","+this.mapY+") move to:("+x+","+y+")"+currentDir);
+//		Gdx.app.debug(TAG, "("+this.mapX+","+this.mapY+") move to:("+x+","+y+")"+currentDir);
 		this.currentState=State.WALKING;
 		this.targetMapX = x;
 		this.targetMapY = y;
 		this.targetX = Transform.positionInWorldX(x);
 		this.targetY = Transform.positionInWorldY(y);
-		Gdx.app.debug(TAG, "("+this.getX()+","+this.getY()+") move to target:("+this.targetX+","+this.targetY+")");
+//		Gdx.app.debug(TAG, "("+this.getX()+","+this.getY()+") move to target:("+this.targetX+","+this.targetY+")");
 	}
-	
+
+	public Animation getMagicAnimation() {
+		return magicAnimation;
+	}
+
+	public Hero scanTarget(List<Hero> enemyHeros) {
+		for(Hero target:enemyHeros){
+			for(Vector2 point:this.fightRange){
+				if(isGood()&&target.getMapX()==(this.getMapX()+point.x) && target.getMapY()==(this.getMapY()+point.y)){
+					return target;
+				}
+				if(!isGood()&&target.getMapX()==(this.getMapX()-point.x) && target.getMapY()==(this.getMapY()+point.y)){
+					return target;
+				}
+			}
+		}
+		return null;
+	}
+
+	public void hit(Hero t) {
+		this.currentState = State.FIGHT;
+		t.setCurrentState(State.BEATEN);
+		t.setLife(t.getLife()-20);
+	}
 }

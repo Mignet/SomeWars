@@ -23,6 +23,11 @@ public class Constants {
 
 	// Location of image file for level 01
 	public static final String BACKGROUND = "battle/background.png";
+	public static final String BLOCK = "battle/block.png";
+	public static final String SELECTBG = "battle/select.png";
+	public static final String CARDBACKGROUND = "cards/card-bg.png";
+	public static final String CARDLIGHT = "cards/card-light.png";
+	public static final String CARDDISABLE = "cards/card-disable.png";
 
 	public static final String MOVE_CELL = "battle/move-cell.png";
 

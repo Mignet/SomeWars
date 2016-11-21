@@ -1,9 +1,11 @@
 package com.v5ent.game.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Stack;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -14,302 +16,456 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+import com.v5ent.game.SomeWars;
+import com.v5ent.game.entities.Block;
+import com.v5ent.game.entities.Command;
 import com.v5ent.game.entities.Hero;
+import com.v5ent.game.entities.Magic;
 import com.v5ent.game.utils.Constants;
 import com.v5ent.game.utils.GameState;
 import com.v5ent.game.utils.Transform;
 
+import static com.v5ent.game.utils.GameState.PREPAREFIGHT;
+import static jdk.nashorn.internal.objects.Global.undefined;
+
 public class WorldController extends InputAdapter implements GestureListener {
 
-	private static final String TAG = WorldController.class.getName();
+    private static final String TAG = WorldController.class.getName();
 
-	public OrthographicCamera camera;
-	public OrthographicCamera cameraGUI;
-	
-	public Sprite background;
-	public GameState gameState;
-	public int second = 5; 
-	
-	public List<Sprite> moveCells = new ArrayList<Sprite>();
-	public List<Sprite> fightCells = new ArrayList<Sprite>();
-	public List<Hero> myHeros;
-	public List<Hero> enemyHeros;
+    SomeWars global;
+    public OrthographicCamera camera;
+    public OrthographicCamera cameraGUI;
 
-	private Hero selectedHeroForPrepare = null;
-	private Hero selectedHeroForMove = null;
+    public Sprite background;
+    public GameState gameState;
+    public int second = 5;
 
-	public WorldController () {
-		gameState = GameState.PREPARE;
-		Gdx.app.debug(TAG, "GameState:"+gameState);
-		Timer timer = new Timer();
-	    Task timerTask = new Task() {
-	         @Override
-	            public void run() {
-	        	 	second--;
-	        	 	if(second==0){
-	        	 		gameState = GameState.MOVE;
-	        	 		Gdx.app.debug(TAG, "GameState:"+gameState);
-	        	 	}
-	            }
-	        };
-	    timer.scheduleTask(timerTask, 0, 1, second);// 0s之后执行，每次间隔1s，执行20次。
-		init();
-	}
+    private Stack<Command> roundList = new Stack<Command>();
+    public List<Sprite> moveCells = new ArrayList<Sprite>();
+    public List<Sprite> fightCells = new ArrayList<Sprite>();
+    public List<Block> blocks = new ArrayList<Block>();
+    public List<Magic> magics = new ArrayList<Magic>();
+    public List<Hero> myHeros = new ArrayList<Hero>();
+    public List<Hero> enemyHeros = new ArrayList<Hero>();
 
-	private void init () {
-		Gdx.input.setInputProcessor(this);
-		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
-		camera.position.set(0, 0, 0);
-		camera.update();
-		cameraGUI = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cameraGUI.position.set(0, 0, 0);
-		cameraGUI.update();
-		// we want the camera to setup a viewport with pixels as units, with the
-		// y-axis pointing upwards. The origin will be in the lower left corner
-		// of the screen.
+    private Hero selectedHeroForPrepare = null;
+    private Hero selectedHeroForMove = null;
+
+    public WorldController(SomeWars game) {
+        global = game;
+        gameState = GameState.PREPARE;
+        Gdx.app.debug(TAG, "GameState:" + gameState);
+        Timer timer = new Timer();
+        Task timerTask = new Task() {
+            @Override
+            public void run() {
+                second--;
+                if (second == 0) {
+                    gameState = GameState.MOVE;
+                    Gdx.app.debug(TAG, "GameState:" + gameState);
+                }
+            }
+        };
+        timer.scheduleTask(timerTask, 0, 1, second);// 0s之后执行，每次间隔1s，执行20次。
+        init();
+    }
+
+    private void init() {
+        Gdx.input.setInputProcessor(this);
+        camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
+        camera.position.set(0, 0, 0);
+        camera.update();
+        cameraGUI = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cameraGUI.position.set(0, 0, 0);
+        cameraGUI.update();
+        // we want the camera to setup a viewport with pixels as units, with the
+        // y-axis pointing upwards. The origin will be in the lower left corner
+        // of the screen.
 //		camera.setToOrtho(false);
-		initObjects();
-	}
+        initObjects();
+    }
 
-	private void initObjects () {
-		background = new Sprite(Assets.instance.background);
-		background.setSize(background.getWidth()/Constants.RV_W_RATIO, background.getHeight()/Constants.RV_H_RATIO);
-		// Set origin to sprite's center
+    private void initObjects() {
+        background = new Sprite(Assets.instance.background);
+        background.setSize(background.getWidth() / Constants.RV_W_RATIO, background.getHeight() / Constants.RV_H_RATIO);
+        // Set origin to sprite's center
 //		background.setOrigin(background.getWidth() / 2.0f, background.getHeight() / 2.0f);
-		background.setPosition(-Constants.VIEWPORT_WIDTH/2, -Constants.VIEWPORT_HEIGHT/2);
-		//moveCells
-		// Create new array for 5 sprites
-		myHeros = new ArrayList<Hero>();
-		int myHerosCnt = 4;
-		// Create a list of texture regions
-		// Create new sprites using a random texture region
-		for (int i = 0; i < myHerosCnt ; i++) {
+        background.setPosition(-Constants.VIEWPORT_WIDTH / 2, -Constants.VIEWPORT_HEIGHT / 2);
+        //moveCells
+        // selected heros
+        myHeros = new ArrayList<Hero>(global.myHeros.values());
+//		int myHerosCnt = 4;
+        // Create a list of texture regions
+        // Create new sprites using a random texture region
+        for (int i = 0; i < myHeros.size(); i++) {
 //			create hero by id
-			Hero spr = new Hero("001");
-			// Calculate random position for sprite
-			spr.setMapPosition(1, i+1);
-			spr.setGood(true);
-			// Put new sprite into array
-			myHeros.add(spr);
-		}
-		enemyHeros = new ArrayList<Hero>();
-		int yourHerosCnt = 2;
-		// Create a list of texture regions
-		// Create new sprites using a random texture region
-		for (int i = 0; i < yourHerosCnt ; i++) {
+            Hero spr = myHeros.get(i);
+            // Calculate random position for sprite
+            spr.setMapPosition(1, i + 1);
+            spr.setGood(true);
+        }
+        //init blocks
+        blocks = new ArrayList<Block>();
+        blocks.add(new Block(3, 0));
+        blocks.add(new Block(3, 4));
+        //init enemy
+        int enemyHerosCnt = 2;
+        // Create a list of texture regions
+        // Create new sprites using a random texture region
+        for (int i = 0; i < enemyHerosCnt; i++) {
 //			create hero by id
-			Hero spr = new Hero("001");
-			spr.setGood(false);
-			// Calculate random position for sprite
-			spr.setMapPosition(Constants.MAP_COLS-1-i, 3);
-			// Put new sprite into array
-			enemyHeros.add(spr);
-		}
-		
-	}
+            Hero spr = new Hero("001");
+            spr.setGood(false);
+            // Calculate random position for sprite
+            spr.setMapPosition(Constants.MAP_COLS - 1 - i, 3);
+            // Put new sprite into array
+            enemyHeros.add(spr);
+        }
 
-	public void update (float deltaTime) {
+    }
+
+    int stop = 0;
+    int TOTLE = -1;//计数器
+
+    public void update(float deltaTime) {
 //		handleDebugInput(deltaTime);
-		updateObjects(deltaTime);
-		if(gameState == GameState.FIGHT){
-			//TODO: command
-			for(Hero h:enemyHeros){
-				h.moveTo(h.getMapX()-1, h.getMapY());
-			}
-			gameState = GameState.MOVE;
-		}
-	}
+        updateObjects(deltaTime);
+        if (gameState == PREPAREFIGHT) {
+            //此时不接受任何输入
+            gameState = GameState.FIGHT;
+            /**
+             *逻辑：对所有的敌人和我军按照敏捷进行排序（降序），依次执行
+             *根据攻击范围，如果范围内有多个敌人，随机选择1个进行攻击
+             */
+            //TODO: command from net,AI
+            for (Hero h : enemyHeros) {
+                int x = h.getMapX() - 1;
+                int y = h.getMapY();
+                if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5 && stop<2) {
+                    h.moveTo(x, y);
+                } else {
+                    stop ++;
+                }
+            }
+            //fighting
+            //1.order all heros by dexterity
+            List<Hero> temp = new ArrayList<Hero>();
+            List<Hero> temp0 = new ArrayList<Hero>(myHeros);
+            List<Hero> temp1 = new ArrayList<Hero>(enemyHeros);
+            temp.addAll(temp0);
+            temp.addAll(temp1);
+            Collections.sort(temp, new Comparator<Hero>() {
+                @Override
+                public int compare(Hero lhs, Hero rhs) {
+                    return lhs.getDexterity() > rhs.getDexterity() ? -1 : (lhs.getDexterity() < rhs.getDexterity()) ? 1 : 0;
+                }
+            });
+            //2.select what's my target
+            int len = temp.size();
+            TOTLE = len;
+            //计数开始
+            int cursor = len;
+            for (Hero h : temp) {
+                Hero target = null;
+                if (h.isGood()) {
+                    target = h.scanTarget(enemyHeros);
+                } else {
+                    target = h.scanTarget(myHeros);
+                }
+                if (target != null) {
+                    //add command
+                    this.roundList.push(new Command(h, target));
+                    Gdx.app.debug(TAG, " hit you!");
+                } else {
+                    TOTLE--;
+                }
+                cursor--;
+                /*if(target!=null){
+					h.hit(target);
+					Magic m = new Magic(h.getMagicAnimation(),h.getMapX(),h.getMapY());
+					m.MoveTo(target.getMapX(),target.getMapY());
+					magics.add(m);
+				}*/
+            }
+//			gameState = GameState.MOVE;
+        }
+        //战斗序列
+        this.command();
+    }
 
-	private void updateObjects (float deltaTime) {
-		for(int i=0;i<myHeros.size();i++){
-			myHeros.get(i).update(deltaTime);
-		}
-		for(int i=0;i<enemyHeros.size();i++){
-			enemyHeros.get(i).update(deltaTime);
-		}
-	}
+    //战斗序列需要计时器来完成每条command
+    private void command() {
+        if (!this.roundList.empty()) {
+            Command obj = this.roundList.pop();
+            if (obj != null) {
+                if (obj.getTarget().getLife() > 0 && obj.getRole().getLife() > 0) {
+                    //this.playAttact(obj.getRole(), obj.getTarget());
+                    obj.getRole().hit(obj.getTarget());
+                    Gdx.app.debug(TAG, obj.getRole() + " hit" + obj.getTarget());
+                } else {
+                    TOTLE--;
+                    this.command();//执行下一条指令
+                }
+            }
+        } else {
+            //所有战斗结束
+            if (TOTLE != -1) {
+                gameState = GameState.MOVE;
+            }
+        }
+    }
 
-	@Override
-	public boolean keyUp (int keycode) {
-		// Reset game world
-		if (keycode == Keys.R) {
-			init();
-			Gdx.app.debug(TAG, "Game world resetted");
-		}else if (keycode == Keys.Q) {
-			Gdx.app.exit();
-		}
-		return false;
-	}
-	
-	 @Override
-	    public boolean touchDown(float screenX, float screenY, int pointer, int button) {
-		 int x1 = Gdx.input.getX();
-		 int y1 = Gdx.input.getY();
-		 Vector3 input = new Vector3(x1, y1, 0);
-		 camera.unproject(input);
-		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
-		 Gdx.app.debug(TAG, "clicked # (" +input.x +","+input.y + " )");
-		 Gdx.app.debug(TAG, "clicked # (" + x1/Constants.RV_W_RATIO+","+ y1/Constants.RV_H_RATIO + " )");
-		 Gdx.app.debug(TAG, "clicked # (" +Transform.mouseInMapX(input.x)+","+ Transform.mouseInMapY(input.y)+ " )");
-		 //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
-		 //sprite has been clicked
-		  if(gameState == GameState.PREPARE && selectedHeroForPrepare!=null){
-			 for(Sprite m:moveCells){
-				 if(m.getBoundingRectangle().contains(input.x,input.y)){
-					 selectedHeroForPrepare.setMapPosition(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
-					 selectedHeroForPrepare.setSelected(false);
-					 selectedHeroForPrepare = null;
-					 moveCells.clear();
-					 return true;
-				 }
-			 }
-		 }
-		  if(gameState == GameState.MOVE && selectedHeroForMove!=null){
-			  for(Sprite m:moveCells){
-				  if(m.getBoundingRectangle().contains(input.x,input.y)){
-					  selectedHeroForMove.moveTo(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
-					  selectedHeroForMove.setSelected(false);
-					  selectedHeroForMove = null;
-					  gameState = GameState.FIGHT; 
-					  moveCells.clear();
-					  return true;
-				  }
-			  }
-		  }
-		 moveCells.clear();
-		 fightCells.clear();
-		 for(int i=0;i<myHeros.size();i++){
-			 Hero h = myHeros.get(i);
-			 if(h.getBoundingRectangle().contains(input.x, input.y)) {
-				 Gdx.app.debug(TAG, " # (Sprite #" + i + " clicked)");
-				 h.setSelected(true);
-				 if(gameState == GameState.PREPARE){
-					 selectedHeroForPrepare  = h;
-					 for(int n=0;n<Constants.MAP_ROWS;n++){
-						 Sprite moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
-						 moveCell.setPosition(Transform.positionInWorldX(0), Transform.positionInWorldY(n));
-						 moveCells.add(moveCell);
-						 moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
-						 moveCell.setPosition(Transform.positionInWorldX(1), Transform.positionInWorldY(n));
-						 moveCells.add(moveCell);
-						 moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
-						 moveCell.setPosition(Transform.positionInWorldX(2), Transform.positionInWorldY(n));
-						 moveCells.add(moveCell);
-					 }
-				 }
-				 if(gameState == GameState.MOVE){
-					 selectedHeroForMove  = h;
-					 for(Vector2 p:h.getMoveRange()){
-						 Sprite moveCell =  new Sprite(Assets.instance.moveCell);
-						 moveCell.setSize(moveCell.getWidth()/Constants.RV_W_RATIO, moveCell.getHeight()/Constants.RV_H_RATIO);
-						 moveCell.setPosition(Transform.positionInWorldX(h.getMapX()+p.x), Transform.positionInWorldY(h.getMapY()+p.y));
-						 moveCells.add(moveCell);
-					 }
-				 }
-			 }else{
-				 h.setSelected(false);
-			 }
-		 }
-		 
-		 for(int i=0;i<enemyHeros.size();i++){
-			 Hero h = enemyHeros.get(i);
-			 if(h.getBoundingRectangle().contains(input.x, input.y)) {
-				 Gdx.app.debug(TAG, " # (Enemy Sprite #" + i + " clicked)");
-				 h.setSelected(true);
-				 for(Vector2 p:h.getFightRange()){
-					 Sprite fightCell =  new Sprite(Assets.instance.fightCell);
-					 fightCell.setSize(fightCell.getWidth()/Constants.RV_W_RATIO, fightCell.getHeight()/Constants.RV_H_RATIO);
-					 fightCell.setPosition(Transform.positionInWorldX(h.getMapX()-p.x), Transform.positionInWorldY(h.getMapY()+p.y));
-					 fightCells.add(fightCell);
-				 }
-			 }else{
-				 h.setSelected(false);
-			 }
-		 }
-	     return true;
-	    }
+    /**
+     * 攻击者特效
+     */
+	/*private void playAttact(Hero role,Hero target) {
+		var action1 = cc.TintBy.create(0.1, -127, -255, -127);
+		var action1Back = action1.reverse();
+		var action2 = cc.MoveBy.create(0.1, cc.ccp((target.x - role.x) * 25, (-target.y + role.y) * 25));
+		var action2Back = action2.reverse();
+		role.runAction(cc.Sequence.create(action1, action1Back, action1, action1Back, action1, action1Back, action2, action2Back, cc.CallFunc.create(this, this.playEffectAt, target)));
+	}*/
+    //blocks + heros
+    private boolean isCollisionWithBlock(int x, int y) {
+        for (Block b : blocks) {
+            if (b.getMapX() == x && b.getMapY() == y) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	    @Override
-	    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-	        return true;
-	    }
+    private boolean isCollisionWithHeros(int x, int y) {
+        for (Hero b : myHeros) {
+            if (b.getTargetMapX() == x && b.getTargetMapY() == y) {
+//                Gdx.app.debug(TAG,"isCollisionWithHeros("+x+","+y+")");
+                return true;
+            }
+        }
+        for (Hero b : enemyHeros) {
+            if (b.getTargetMapX() == x && b.getTargetMapY() == y) {
+//                Gdx.app.debug(TAG,"isCollisionWithEnemies("+x+","+y+")");
+                return true;
+            }
+        }
+        return false;
+    }
 
-	    @Override
-	    public boolean touchDragged(int screenX, int screenY, int pointer) {
-	        return true;
-	    }
+    private void updateObjects(float deltaTime) {
+        for (int i = 0; i < myHeros.size(); i++) {
+            myHeros.get(i).update(deltaTime);
+        }
+        for (int i = 0; i < enemyHeros.size(); i++) {
+            enemyHeros.get(i).update(deltaTime);
+        }
+        for (Magic m : magics) {
+            m.update(deltaTime);
+        }
+    }
 
-		@Override
-		public boolean tap(float x, float y, int count, int button) {
-			return false;
-		}
+    @Override
+    public boolean keyUp(int keycode) {
+        // Reset game world
+        if (keycode == Keys.R) {
+            init();
+            Gdx.app.debug(TAG, "Game world resetted");
+        } else if (keycode == Keys.Q) {
+            Gdx.app.exit();
+        }
+        return false;
+    }
 
-		@Override
-		public boolean longPress(float x, float y) {
-			return false;
-		}
+    @Override
+    public boolean touchDown(float screenX, float screenY, int pointer, int button) {
+        int x1 = Gdx.input.getX();
+        int y1 = Gdx.input.getY();
+        Vector3 input = new Vector3(x1, y1, 0);
+        camera.unproject(input);
+//		 Gdx.app.debug(TAG, "clicked # (" + x1+","+ y1 + " )");
+//		 Gdx.app.debug(TAG, "clicked # (" +input.x +","+input.y + " )");
+//		 Gdx.app.debug(TAG, "clicked # (" + x1/Constants.RV_W_RATIO+","+ y1/Constants.RV_H_RATIO + " )");
+//		 Gdx.app.debug(TAG, "clicked # (" +Transform.mouseInMapX(input.x)+","+ Transform.mouseInMapY(input.y)+ " )");
+        //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
+        //sprite has been clicked
+        if (gameState == GameState.PREPARE && selectedHeroForPrepare != null) {
+            for (Sprite m : moveCells) {
+                if (m.getBoundingRectangle().contains(input.x, input.y)) {
+                    selectedHeroForPrepare.setMapPosition(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
+                    selectedHeroForPrepare.setSelected(false);
+                    selectedHeroForPrepare = null;
+                    moveCells.clear();
+                    return true;
+                }
+            }
+        }
+        //move single hero
+        if (gameState == GameState.MOVE && selectedHeroForMove != null) {
+            for (Sprite m : moveCells) {
+                if (m.getBoundingRectangle().contains(input.x, input.y)) {
+                    int x = Transform.mouseInMapX(input.x);
+                    int y = Transform.mouseInMapY(input.y);
+                    if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5) {
+                        selectedHeroForMove.moveTo(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
+                        selectedHeroForMove.setSelected(false);
+                        selectedHeroForMove = null;
+                        gameState = PREPAREFIGHT;
+                        moveCells.clear();
+                        Gdx.app.debug(TAG, " # Move To (" + x + "," + y + " )");
+                    }
+                    return true;
+                }
+            }
+        }
+        moveCells.clear();
+        fightCells.clear();
+        for (int i = 0; i < myHeros.size(); i++) {
+            Hero h = myHeros.get(i);
+            if (h.getBoundingRectangle().contains(input.x, input.y)) {
+                Gdx.app.debug(TAG, " # (Sprite #"+h.getName()+"(" + h.getMapX()+","+h.getMapY() + ") clicked)");
+                h.setSelected(true);
+                if (gameState == GameState.PREPARE) {
+                    selectedHeroForPrepare = h;
+                    for (int n = 0; n < Constants.MAP_ROWS; n++) {
+                        Sprite moveCell = new Sprite(Assets.instance.moveCell);
+                        moveCell.setSize(moveCell.getWidth() / Constants.RV_W_RATIO, moveCell.getHeight() / Constants.RV_H_RATIO);
+                        moveCell.setPosition(Transform.positionInWorldX(0), Transform.positionInWorldY(n));
+                        moveCells.add(moveCell);
+                        moveCell = new Sprite(Assets.instance.moveCell);
+                        moveCell.setSize(moveCell.getWidth() / Constants.RV_W_RATIO, moveCell.getHeight() / Constants.RV_H_RATIO);
+                        moveCell.setPosition(Transform.positionInWorldX(1), Transform.positionInWorldY(n));
+                        moveCells.add(moveCell);
+                        moveCell = new Sprite(Assets.instance.moveCell);
+                        moveCell.setSize(moveCell.getWidth() / Constants.RV_W_RATIO, moveCell.getHeight() / Constants.RV_H_RATIO);
+                        moveCell.setPosition(Transform.positionInWorldX(2), Transform.positionInWorldY(n));
+                        moveCells.add(moveCell);
+                    }
+                }
+                if (gameState == GameState.MOVE) {
+                    selectedHeroForMove = h;
+                    for (Vector2 p : h.getMoveRange()) {
+                        Sprite moveCell = new Sprite(Assets.instance.moveCell);
+                        moveCell.setSize(moveCell.getWidth() / Constants.RV_W_RATIO, moveCell.getHeight() / Constants.RV_H_RATIO);
+                        moveCell.setPosition(Transform.positionInWorldX(h.getMapX() + p.x), Transform.positionInWorldY(h.getMapY() + p.y));
+                        moveCells.add(moveCell);
+                    }
+                }
+            } else {
+                h.setSelected(false);
+            }
+        }
 
-		@Override
-		public boolean fling(float velocityX, float velocityY, int button) {
-			Gdx.app.log("GestureDetectorTest", "fling " + velocityX + ", " + velocityY);
-			 if(gameState == GameState.MOVE){
-				 if(velocityX>1000){
-					 Gdx.app.debug(TAG, "RIGHT");
-					 //all heros move
-					 for(Hero h:myHeros){
-						 h.moveTo(h.getMapX()+1, h.getMapY());
-					 }
-					 gameState = GameState.FIGHT;
-				 }
-				 if(velocityX<-1000){
-					 Gdx.app.debug(TAG, "LEFT");
-					 //all heros move
-					 for(Hero h:myHeros){
-						 h.moveTo(h.getMapX()-1, h.getMapY());
-					 }
-					 gameState = GameState.FIGHT;
-				 }
-				 if(velocityY>1000){
-					 Gdx.app.debug(TAG, "DOWN");
-					 //all heros move
-					 for(Hero h:myHeros){
-						 h.moveTo(h.getMapX(), h.getMapY()-1);
-					 }
-					 gameState = GameState.FIGHT;
-				 }
-				 if(velocityY<-1000){
-					 Gdx.app.debug(TAG, "UP");
-					 //all heros move
-					 for(Hero h:myHeros){
-						 h.moveTo(h.getMapX(), h.getMapY()+1);
-					 }
-					 gameState = GameState.FIGHT;
-				 }
-			 }
-			return false;
-		}
+        for (int i = 0; i < enemyHeros.size(); i++) {
+            Hero h = enemyHeros.get(i);
+            if (h.getBoundingRectangle().contains(input.x, input.y)) {
+                Gdx.app.debug(TAG, " # (Enemy Sprite #" + i + " clicked)");
+                h.setSelected(true);
+                for (Vector2 p : h.getFightRange()) {
+                    Sprite fightCell = new Sprite(Assets.instance.fightCell);
+                    fightCell.setSize(fightCell.getWidth() / Constants.RV_W_RATIO, fightCell.getHeight() / Constants.RV_H_RATIO);
+                    fightCell.setPosition(Transform.positionInWorldX(h.getMapX() - p.x), Transform.positionInWorldY(h.getMapY() + p.y));
+                    fightCells.add(fightCell);
+                }
+            } else {
+                h.setSelected(false);
+            }
+        }
+        return true;
+    }
 
-		@Override
-		public boolean pan(float x, float y, float deltaX, float deltaY) {
-			return false;
-		}
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return true;
+    }
 
-	@Override
-	public boolean panStop(float x, float y, int pointer, int button) {
-		return false;
-	}
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return true;
+    }
 
-	@Override
-		public boolean zoom(float initialDistance, float distance) {
-			return false;
-		}
+    @Override
+    public boolean tap(float x, float y, int count, int button) {
+        return false;
+    }
 
-		@Override
-		public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
-				Vector2 pointer1, Vector2 pointer2) {
-			return false;
-		}
+    @Override
+    public boolean longPress(float x, float y) {
+        return false;
+    }
+
+    @Override
+    public boolean fling(float velocityX, float velocityY, int button) {
+        Gdx.app.log("GestureDetectorTest", "fling " + velocityX + ", " + velocityY);
+        if (gameState == GameState.MOVE) {
+            if (velocityX > 1000) {
+                Gdx.app.debug(TAG, "RIGHT");
+                //all heros move
+                for (Hero h : myHeros) {
+                    int x = h.getMapX() + 1;
+                    int y = h.getMapY();
+                    if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5) {
+                        h.moveTo(x, y);
+                    }
+                }
+                gameState = PREPAREFIGHT;
+            }
+            if (velocityX < -1000) {
+                Gdx.app.debug(TAG, "LEFT");
+                //all heros move
+                for (Hero h : myHeros) {
+                    int x = h.getMapX() - 1;
+                    int y = h.getMapY();
+                    if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5) {
+                        h.moveTo(x, y);
+                    }
+                }
+                gameState = PREPAREFIGHT;
+            }
+            if (velocityY > 1000) {
+                Gdx.app.debug(TAG, "DOWN");
+                //all heros move
+                for (Hero h : myHeros) {
+                    int x = h.getMapX();
+                    int y = h.getMapY() - 1;
+                    if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5) {
+                        h.moveTo(x, y);
+                    }
+                }
+                gameState = PREPAREFIGHT;
+            }
+            if (velocityY < -1000) {
+                Gdx.app.debug(TAG, "UP");
+                //all heros move
+                for (Hero h : myHeros) {
+                    int x = h.getMapX();
+                    int y = h.getMapY() + 1;
+                    if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5) {
+                        h.moveTo(x, y);
+                    }
+                }
+                gameState = PREPAREFIGHT;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean pan(float x, float y, float deltaX, float deltaY) {
+        return false;
+    }
+
+    @Override
+    public boolean panStop(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean zoom(float initialDistance, float distance) {
+        return false;
+    }
+
+    @Override
+    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
+                         Vector2 pointer1, Vector2 pointer2) {
+        return false;
+    }
 }

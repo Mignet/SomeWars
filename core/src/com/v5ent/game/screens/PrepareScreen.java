@@ -23,24 +23,23 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.v5ent.game.SomeWars;
 import com.v5ent.game.core.Assets;
+import com.v5ent.game.entities.Card;
 import com.v5ent.game.entities.Hero;
 
 public class PrepareScreen implements Screen {
+	private static final String TAG = PrepareScreen.class.getName();
 	private SomeWars gameIns;
 	private Stage stage;
-	private Table container;
-	// menu
-	private Image imgBackground;
-
-	List<Hero> myHeros = new ArrayList<Hero>();
 
 	public PrepareScreen(SomeWars game) {
 		gameIns = game;
 		stage = new Stage();
+		stage.addActor(new Image(Assets.instance.background));
 		Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		Gdx.input.setInputProcessor(stage);
 		// Gdx.graphics.setVSync(false);
-		container = new Table();
+		Table container = new Table();
+//		container.add(new Image(Assets.instance.selectBg));
 		stage.addActor(container);
 		container.setFillParent(true);
 
@@ -50,22 +49,25 @@ public class PrepareScreen implements Screen {
 		final ScrollPane scroll = new ScrollPane(rightTable, skin);
 //        table.pad(10).defaults().right().space(4);
 		//TODO:从数据库获取
-		myHeros.add(new Hero("001"));
-		myHeros.add(new Hero("002"));
-		for (int i = 0; i < 40; i++) {
+//		myHeros.add(new Hero("001"));
+//		myHeros.add(new Hero("002"));
+		for (int i = 1; i < 10; i++) {
 			rightTable.row();
-			final CheckBox checkBox = new CheckBox("Hero:"+padZero(i+1)+(i+1), skin);
+			final Card checkBox = new Card("00"+i, skin);
 			checkBox.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
 					if (checkBox.isChecked()) {
-						Gdx.app.log("TAG",actor.getName()+ " is checked");
+						Gdx.app.log(TAG,actor.getUserObject()+ " is checked");
+						gameIns.myHeros.put(actor.getUserObject().toString(),new Hero(actor.getUserObject().toString()));
 					} else {
-						Gdx.app.log("TAG", "box is unchecked");
+						gameIns.myHeros.remove(actor.getUserObject().toString());
+						Gdx.app.log(TAG, actor.getUserObject()+ " is unchecked");
 					}
+					Gdx.app.debug(TAG,"gameIns.myHeros:"+gameIns.myHeros);
 				}
 			});
-			rightTable.add(checkBox).expandX();
+			rightTable.add(checkBox).width(196f).height(250f);
 			rightTable.add(new Label(i + " some desciption, every hero has desciption", skin));
 		}
 		Table bottomTable = new Table();
@@ -73,7 +75,7 @@ public class PrepareScreen implements Screen {
 		bottomTable.setHeight(startButton.getHeight());
 		bottomTable.setWidth(Gdx.graphics.getWidth());
 		bottomTable.center();
-		bottomTable.add(startButton).padBottom(60);
+		bottomTable.add(startButton).padBottom(120);
 		stage.addActor(bottomTable);
 		startButton.addListener(new ClickListener() {
 									@Override
@@ -87,18 +89,6 @@ public class PrepareScreen implements Screen {
 									}
 								}
 		);
-		/**
-		 * 以下是Table的相关API的一些个人的解释
-		 * row():开启一个新行
-		 * right():向右移动一点,默认在最左边
-		 * left():在最左边显示,默认在中间
-		 * expandX():扩展X轴(最明显的效果就是用了这个以后位置向右移动了)
-		 * add()添加一列
-		 * right().expandX():可以理解为不断地向右拓展...
-		 * space(10): 单元格与单元格之间的距离以及单元格与上边界之间的距离
-		 * padBottom(0): 单元格与下边界之间的距离为0
-		 * fill():将fillX()、fillY()设置成1
-		 */
 //      container.add(scroll).expand().fill().colspan(4);
 		container.add(scroll).fill().expand().colspan(4);
 		container.row().space(10).padBottom(0);
@@ -106,13 +96,6 @@ public class PrepareScreen implements Screen {
 //      container.add(onTopButton);
 //      container.add(smoothButton);
 		//container.add(fadeButton).left().expandX();
-	}
-	private Table buildBackgroundLayer() {
-		Table layer = new Table();
-		// + Background
-//		imgBackground = new Image(skinCanyonBunny, "background");
-		layer.add(imgBackground);
-		return layer;
 	}
 	private String padZero(int n) {
 		if(n<10){
@@ -141,7 +124,7 @@ public class PrepareScreen implements Screen {
 		stage.act(delta);
 		stage.draw();
 
-		stage.setDebugAll(true);
+//		stage.setDebugAll(true);
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class MainGameScreen  implements Screen{
 	@Override
 	public void show () {
 		// Initialize controller and renderer
-		worldController = new WorldController();
+		worldController = new WorldController(game);
 		GestureDetector gestureDetector = new GestureDetector(10, 0.5f, 2, 0.15f, worldController);
 		Gdx.input.setInputProcessor(gestureDetector);
 		worldRenderer = new WorldRenderer(worldController);
