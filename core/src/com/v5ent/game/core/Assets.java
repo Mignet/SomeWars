@@ -9,6 +9,7 @@ import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.v5ent.game.utils.Constants;
 
-import sun.net.www.content.image.png;
 
 import static com.v5ent.game.utils.Constants.CARDLIGHT;
 
@@ -29,6 +29,8 @@ public class Assets implements Disposable, AssetErrorListener {
 	public Skin STATUSUI_SKIN ;
 
 	private AssetManager assetManager;
+
+	public BitmapFont font;
 
 	public Texture background;
 	public Texture selectBg;
@@ -99,6 +101,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		assetManager.load(Constants.CARDLIGHT, Texture.class);
 		assetManager.load(Constants.MOVE_CELL, Texture.class);
 		assetManager.load(Constants.FIGHT_CELL, Texture.class);
+		font = new BitmapFont(Gdx.files.internal("data/num.fnt"));
 		STATUSUI_SKIN = new Skin(Gdx.files.internal("skins/statusui.json"));
 		//TODO:当前提供的所有英雄
 		int heroCnt = 2;

@@ -12,8 +12,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Some Wars";
 		cfg.useGL30 = false;
-		cfg.width = 1136;
-		cfg.height = 768;
+		cfg.width = 800;
+		cfg.height = 480;
 		cfg.addIcon("icon.png", Files.FileType.Internal);
 		Gdx.app  = new LwjglApplication(new SomeWars(), cfg);
 		 //Gdx.app.setLogLevel(Application.LOG_INFO);

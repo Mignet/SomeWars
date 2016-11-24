@@ -147,6 +147,7 @@ public class WorldController extends InputAdapter implements GestureListener {
                     stop ++;
                 }
             }
+            Gdx.app.debug(TAG,"prepare to fight!");
             //fighting
             //1.order all heros by dexterity
             List<Hero> temp = new ArrayList<Hero>();
@@ -175,7 +176,7 @@ public class WorldController extends InputAdapter implements GestureListener {
                 if (target != null) {
                     //add command
                     this.roundList.push(new Command(h, target));
-                    Gdx.app.debug(TAG, " hit you!");
+                    Gdx.app.debug(TAG, " Push Command!");
                 } else {
                     TOTLE--;
                 }
@@ -198,10 +199,11 @@ public class WorldController extends InputAdapter implements GestureListener {
         if (!this.roundList.empty()) {
             Command obj = this.roundList.pop();
             if (obj != null) {
+
                 if (obj.getTarget().getLife() > 0 && obj.getRole().getLife() > 0) {
                     //this.playAttact(obj.getRole(), obj.getTarget());
                     obj.getRole().hit(obj.getTarget());
-                    Gdx.app.debug(TAG, obj.getRole() + " hit" + obj.getTarget());
+                    Gdx.app.debug(TAG, obj.getRole().getId() + " hit" + obj.getTarget().getId());
                 } else {
                     TOTLE--;
                     this.command();//执行下一条指令
@@ -321,7 +323,7 @@ public class WorldController extends InputAdapter implements GestureListener {
         for (int i = 0; i < myHeros.size(); i++) {
             Hero h = myHeros.get(i);
             if (h.getBoundingRectangle().contains(input.x, input.y)) {
-                Gdx.app.debug(TAG, " # (Sprite #"+h.getName()+"(" + h.getMapX()+","+h.getMapY() + ") clicked)");
+                Gdx.app.debug(TAG, " # (Sprite #"+h.getId()+"(" + h.getMapX()+","+h.getMapY() + ") clicked)");
                 h.setSelected(true);
                 if (gameState == GameState.PREPARE) {
                     selectedHeroForPrepare = h;

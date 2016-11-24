@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +16,11 @@ import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
 import com.v5ent.game.utils.Constants;
 import com.v5ent.game.utils.Transform;
+
+import static com.v5ent.game.utils.Constants.RV_H_RATIO;
+import static com.v5ent.game.utils.Constants.RV_W_RATIO;
+import static com.v5ent.game.utils.Transform.offsetX;
+import static com.v5ent.game.utils.Transform.offsetY;
 
 public class Hero extends Sprite{
 	
@@ -96,7 +103,7 @@ public class Hero extends Sprite{
 		magicAnimation = ah.magicRightAnimation;
 		currentFrame =idleRightAnimation.getKeyFrame(0);
 		// Define sprite size to be 1m x 1m in game world
-		this.setSize(currentFrame.getRegionWidth()/Constants.RV_W_RATIO, currentFrame.getRegionHeight()/Constants.RV_H_RATIO);
+		this.setSize(currentFrame.getRegionWidth()/ RV_W_RATIO, currentFrame.getRegionHeight()/ RV_H_RATIO);
 		// Set origin to sprite's center
 		this.setOrigin(this.getWidth() / 2.0f, 0);
 		nextPosition = new Vector2(this.getX(),this.getY());
@@ -144,10 +151,15 @@ public class Hero extends Sprite{
 			// Draw image
 			updateCurrentFrame();
 			reg = currentFrame;
-	//		batch.draw(currentFrame.getTexture(),getX(), getY(),getWidth(),getHeight());
 			batch.draw(reg.getTexture(), (Constants.CELL_WIDTH-getWidth())/2+getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
 				getRotation(), reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),!good, false);
 //			Gdx.app.debug(TAG, "hero's coor:"+getX()+","+getY());
+		//life
+		float x = Assets.instance.font.getScaleX();
+		float y = Assets.instance.font.getScaleY();
+		Assets.instance.font.getData().setScale(x/60,y/60);
+		Assets.instance.font.draw(batch, "HP:["+life+"]",mapX+offsetX, mapY+offsetY);
+		Assets.instance.font.getData().setScale(x,y);
 			// Reset color to white
 			batch.setColor(1, 1, 1, 1);
 		}
@@ -162,6 +174,7 @@ public class Hero extends Sprite{
 
 	public void setCurrentState(State currentState) {
 		this.currentState = currentState;
+		frameTime = 0;
 	}
 
 	public void updateCurrentFrame() {
@@ -177,12 +190,14 @@ public class Hero extends Sprite{
 		case FIGHT:
 			currentFrame = fightRightAnimation.getKeyFrame(frameTime);
 			if(fightRightAnimation.isAnimationFinished(frameTime)){
+				Gdx.app.debug(TAG,"fightRightAnimation.isAnimationFinished");
 				currentState = State.IDLE;
 			}
 			break;
 		case BEATEN:
 			currentFrame = beatenRightAnimation.getKeyFrame(frameTime);
 			if(beatenRightAnimation.isAnimationFinished(frameTime)){
+				Gdx.app.debug(TAG,"beatenRightAnimation.isAnimationFinished");
 				currentState = State.IDLE;
 			}
 			break;
@@ -349,7 +364,7 @@ public class Hero extends Sprite{
 	}
 
 	public void hit(Hero t) {
-		this.currentState = State.FIGHT;
+		this.setCurrentState(State.FIGHT);
 		t.setCurrentState(State.BEATEN);
 		t.setLife(t.getLife()-20);
 	}
