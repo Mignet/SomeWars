@@ -16,6 +16,15 @@ import com.v5ent.game.utils.Transform;
 public class Magic extends Sprite {
     private TextureRegion currentFrame = null;
     private Animation magicAnimation;
+
+    public Direction getCurrentDir() {
+        return currentDir;
+    }
+
+    public void setCurrentDir(Direction currentDir) {
+        this.currentDir = currentDir;
+    }
+
     private Direction currentDir = Direction.RIGHT;
 
     public boolean isOver = false;
@@ -29,7 +38,7 @@ public class Magic extends Sprite {
     public Magic(Animation m,int x, int y){
         magicAnimation = m;
         currentFrame = m.getKeyFrame(0);
-        this.setSize(currentFrame.getRegionWidth()/ Constants.RV_W_RATIO, currentFrame.getRegionHeight()/Constants.RV_H_RATIO);
+        this.setSize(currentFrame.getRegionWidth()/ Constants.RV_W_RATIO, currentFrame.getRegionHeight()*4/Constants.RV_H_RATIO);
         // Set origin to sprite's center
 //        this.setOrigin(this.getWidth() / 2.0f, 0);
         mapX = x;
@@ -41,19 +50,23 @@ public class Magic extends Sprite {
     public void update(float delta) {
         frameTime = (frameTime + delta) % 4; // Want to avoid overflow
         currentFrame = magicAnimation.getKeyFrame(frameTime);
-        if(Transform.positionInWorldX(targetMapX) == getX() && Transform.positionInWorldY(targetMapY)==getY()){
+        if(magicAnimation.isAnimationFinished(frameTime)){
             isOver = true;
         }
+       /* if(Transform.positionInWorldX(targetMapX) == getX() && Transform.positionInWorldY(targetMapY)==getY()){
+            isOver = true;
+        }*/
     }
 
     @Override
     public void draw(Batch batch) {
-        batch.draw(currentFrame.getTexture(), (Constants.CELL_WIDTH-getWidth())/2+getX(), getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
+        float offsetX = currentDir==Direction.RIGHT?-Constants.CELL_WIDTH/2:Constants.CELL_WIDTH/2;
+        batch.draw(currentFrame.getTexture(), offsetX+(Constants.CELL_WIDTH-getWidth())/2+getX(), (Constants.CELL_HEIGHT-getHeight())/2+getY(),getOriginX(), getOriginY(), getWidth(),getHeight(), getScaleX(), getScaleY(),
                 getRotation(), currentFrame.getRegionX(), currentFrame.getRegionY(), currentFrame.getRegionWidth(), currentFrame.getRegionHeight(),currentDir==Direction.LEFT, false);
 //        super.draw(batch);
     }
 
-    public void MoveTo(int mapX, int mapY) {
+    public void moveTo(int mapX, int mapY) {
         if(mapX > this.getMapX()){
             currentDir = Direction.RIGHT;
         }else{

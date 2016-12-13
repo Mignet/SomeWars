@@ -95,6 +95,7 @@ public class Hero extends Sprite{
 	private Animation magicAnimation;
 
 	public Hero(String id) {
+		this.id = id;
 		AssetHero ah = Assets.instance.assetHeros.get(id);
 		idleRightAnimation = ah.idleRightAnimation;
 		walkRightAnimation = ah.walkRightAnimation;
@@ -193,17 +194,17 @@ public class Hero extends Sprite{
 			break;
 		case FIGHT:
 			currentFrame = fightRightAnimation.getKeyFrame(frameTime);
-			if(fightRightAnimation.isAnimationFinished(frameTime)){
+			/*if(fightRightAnimation.isAnimationFinished(frameTime)){
 				Gdx.app.debug(TAG,"fightRightAnimation.isAnimationFinished");
 				currentState = State.IDLE;
-			}
+			}*/
 			break;
 		case BEATEN:
 			currentFrame = beatenRightAnimation.getKeyFrame(frameTime);
-			if(beatenRightAnimation.isAnimationFinished(frameTime)){
+			/*if(beatenRightAnimation.isAnimationFinished(frameTime)){
 				Gdx.app.debug(TAG,"beatenRightAnimation.isAnimationFinished");
 				currentState = State.IDLE;
-			}
+			}*/
 			break;
 		default:
 			currentFrame = idleRightAnimation.getKeyFrame(frameTime);
@@ -369,7 +370,7 @@ public class Hero extends Sprite{
 
 	public void hit(Hero t) {
 		//TODO:random
-		int damage = MathUtils.random(20);
+		int damage = MathUtils.random(12,20);
 		Gdx.app.debug(TAG, this.getId() + " hit" + t.getId()+" damage:"+damage);
 		t.setLife(t.getLife()- damage);
 	}

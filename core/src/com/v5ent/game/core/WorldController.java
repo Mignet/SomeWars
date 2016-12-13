@@ -142,8 +142,7 @@ public class WorldController extends InputAdapter implements GestureListener {
         }
     }
 
-    int stop = 0;
-    int TOTLE = -1;//计数器
+//    int stop = 0;
 
     public void update(float deltaTime) {
 //		handleDebugInput(deltaTime);
@@ -154,11 +153,11 @@ public class WorldController extends InputAdapter implements GestureListener {
             for (Hero h : enemyHeros) {
                 int x = h.getMapX() - 1;
                 int y = h.getMapY();
-                if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5 && stop<2) {
+                if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5 /*&& stop<2*/) {
                     h.moveTo(x, y);
-                } else {
+                } /*else {
                     stop ++;
-                }
+                }*/
             }
             gameState = TO_FIGHT;
         }
@@ -184,7 +183,6 @@ public class WorldController extends InputAdapter implements GestureListener {
             });
             //2.select what's my target
             int len = temp.size();
-            TOTLE = len;
             //计数开始
             for (Hero h : temp) {
                 Hero target = null;
@@ -196,9 +194,7 @@ public class WorldController extends InputAdapter implements GestureListener {
                 if (target != null) {
                     //add command
                     this.roundList.push(new Command(h, target));
-                    Gdx.app.debug(TAG, " Push Command!");
-                } else {
-                    TOTLE--;
+                    Gdx.app.debug(TAG, " Push Command!=>"+h+"|"+target);
                 }
             }
             gameState = FIGHT;
@@ -216,29 +212,45 @@ public class WorldController extends InputAdapter implements GestureListener {
             global.setScreen(global.gameoverScreen);
         }
     }
-
+    Hero role,target;
     //战斗序列需要计时器来完成每条command
     private void command() {
+        //代表上一条指令没有完成
+        if((role!=null&&role.getCurrentState()!= Hero.State.IDLE)||(target!=null&&target.getCurrentState()!= Hero.State.IDLE)){
+            return;
+        }
         if (!this.roundList.empty()) {
+
             final Command cmd = this.roundList.pop();
             if (cmd != null) {
-                if (cmd.getTarget().getLife() > 0 && cmd.getRole().getLife() > 0) {
+                role = cmd.getRole();
+                target = cmd.getTarget();
+
+                if (role.getLife() > 0 && target.getLife() > 0) {
                     //this.playAttact(cmd.getRole(), cmd.getTarget());
-                    cmd.getRole().setCurrentState(Hero.State.FIGHT);
+                    role.setCurrentState(Hero.State.FIGHT);
                     //0.1秒之后，挨打
                     Timer.schedule(new Task() {
                         @Override
                         public void run() {
-                            cmd.getTarget().setCurrentState(Hero.State.BEATEN);
+                            Magic m = new Magic(role.getMagicAnimation(),target.getMapX(),target.getMapY());
+                            if(role.getX()<=target.getX()){
+                                m.setCurrentDir(Magic.Direction.RIGHT);
+                            }else{
+                                m.setCurrentDir(Magic.Direction.LEFT);
+                            }
+//                            m.moveTo(target.getMapX(),target.getMapY());
+                            magics.add(m);
+                            target.setCurrentState(Hero.State.BEATEN);
                             //0.5秒之后，next command
                             Timer.schedule(new Task() {
                                 @Override
                                 public void run() {
                                     //真正的攻击
-                                    cmd.getRole().hit(cmd.getTarget());
-                                    //目标死亡,移除列表和地图，播放死亡动画
-                                    Hero role = cmd.getRole();
-                                    Hero target = cmd.getTarget();
+                                    role.hit(target);
+                                    role.setCurrentState(Hero.State.IDLE);
+                                    target.setCurrentState(Hero.State.IDLE);
+                                    //目标死亡,移除列表，播放死亡动画
                                     if(target.getLife()<=0){
                                         if (role.isGood()) {
                                             enemyHeros.remove(target);
@@ -247,23 +259,21 @@ public class WorldController extends InputAdapter implements GestureListener {
                                         }
                                         Gdx.app.debug(TAG,  cmd.getTarget().getId()+ " dead");
                                     }
-                                    TOTLE--;
                                     command();//执行下一条指令
                                 }
-                            },1f);
+                            },0.6f);
                         }
-                    },0.1f);
+                    },0.2f);
 
                 } else {
-                    TOTLE--;
                     this.command();//执行下一条指令
                 }
             }
         } else {
             //所有战斗结束
-            if (TOTLE != -1) {
+//            if (TOTLE != -1) {
                 gameState = GameState.MOVE;
-            }
+//            }
         }
     }
 
@@ -311,7 +321,11 @@ public class WorldController extends InputAdapter implements GestureListener {
             enemyHeros.get(i).update(deltaTime);
         }
         for (Magic m : magics) {
-            m.update(deltaTime);
+            if(!m.isOver){
+                m.update(deltaTime);
+            }else{
+                magics.remove(m);
+            }
         }
     }
 

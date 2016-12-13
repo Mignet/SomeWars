@@ -17,8 +17,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.v5ent.game.SomeWars;
 import com.v5ent.game.core.Assets;
+import com.v5ent.game.utils.Constants;
 
 public class LoginGameScreen implements Screen {
 	private static final String TAG = LoginGameScreen.class.getName();
@@ -31,7 +33,8 @@ public class LoginGameScreen implements Screen {
 		gameIns = game;
 
 		//create
-		stage = new Stage();
+		ExtendViewport viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		stage = new Stage(viewport);
 		// + Background
         Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/welcome.jpg")));
         imgBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth());

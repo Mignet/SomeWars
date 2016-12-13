@@ -29,8 +29,8 @@ public class GameOverScreen implements Screen {
         //create
         _stage = new Stage();
     	// + Background
-        Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/gameover.jpg")));
-        _stage.addActor(imgBackground);
+//        Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/gameover.jpg")));
+//        _stage.addActor(imgBackground);
         Texture tex = new Texture(Gdx.files.internal("menus/gameover-button.png"));       
 		TextureRegion[][] tmp = TextureRegion.split(tex, 112, 43);
 //		ImageButton continueButton = new  ImageButton(new TextureRegionDrawable(tmp[0][0]), new TextureRegionDrawable(tmp[0][1]));
@@ -67,7 +67,7 @@ public class GameOverScreen implements Screen {
 
                                        @Override
                                        public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-//                                           _game.setScreen(_game.mainMenuScreen);
+                                           _game.setScreen(_game.prepareScreen);
                                        }
                                    }
         );

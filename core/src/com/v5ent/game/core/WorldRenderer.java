@@ -70,9 +70,10 @@ public class WorldRenderer implements Disposable {
 //			Gdx.app.debug(TAG,"Hero:"+h.getX()+","+h.getY());
 			h.draw(batch);
 		}
-		for(Magic m:worldController.magics){
+		for (int i = 0; i < worldController.magics.size(); i++) {
+			Magic m = worldController.magics.get(i);
 			if(m.isOver){
-				worldController.magics.remove(m);
+				worldController.magics.remove(i);
 			}else{
 				m.draw(batch);
 			}

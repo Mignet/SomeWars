@@ -21,10 +21,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.v5ent.game.SomeWars;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.entities.Card;
 import com.v5ent.game.entities.Hero;
+import com.v5ent.game.utils.Constants;
 
 public class PrepareScreen implements Screen {
 	private static final String TAG = PrepareScreen.class.getName();
@@ -33,7 +35,8 @@ public class PrepareScreen implements Screen {
 
 	public PrepareScreen(SomeWars game) {
 		gameIns = game;
-		stage = new Stage();
+		ExtendViewport viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		stage = new Stage(viewport);
 		stage.addActor(new Image(Assets.instance.background));
 		Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		Gdx.input.setInputProcessor(stage);
