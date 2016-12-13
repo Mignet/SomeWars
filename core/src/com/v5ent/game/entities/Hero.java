@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.v5ent.game.core.Assets;
 import com.v5ent.game.core.Assets.AssetHero;
@@ -175,6 +176,9 @@ public class Hero extends Sprite{
 	public void setCurrentState(State currentState) {
 		this.currentState = currentState;
 		frameTime = 0;
+	}
+	public State getCurrentState(){
+		return currentState;
 	}
 
 	public void updateCurrentFrame() {
@@ -364,8 +368,9 @@ public class Hero extends Sprite{
 	}
 
 	public void hit(Hero t) {
-		this.setCurrentState(State.FIGHT);
-		t.setCurrentState(State.BEATEN);
-		t.setLife(t.getLife()-20);
+		//TODO:random
+		int damage = MathUtils.random(20);
+		Gdx.app.debug(TAG, this.getId() + " hit" + t.getId()+" damage:"+damage);
+		t.setLife(t.getLife()- damage);
 	}
 }

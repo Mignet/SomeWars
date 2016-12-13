@@ -4,5 +4,6 @@ public enum GameState {
 	PREPARE,//布阵
 	MOVE,
 	PREPAREFIGHT,
+	TO_FIGHT,
 	FIGHT
 }

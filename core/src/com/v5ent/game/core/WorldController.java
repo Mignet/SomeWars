@@ -25,8 +25,9 @@ import com.v5ent.game.utils.Constants;
 import com.v5ent.game.utils.GameState;
 import com.v5ent.game.utils.Transform;
 
+import static com.v5ent.game.utils.GameState.FIGHT;
 import static com.v5ent.game.utils.GameState.PREPAREFIGHT;
-import static jdk.nashorn.internal.objects.Global.undefined;
+import static com.v5ent.game.utils.GameState.TO_FIGHT;
 
 public class WorldController extends InputAdapter implements GestureListener {
 
@@ -121,7 +122,24 @@ public class WorldController extends InputAdapter implements GestureListener {
             // Put new sprite into array
             enemyHeros.add(spr);
         }
-
+    }
+    private boolean allHerosMoveCompleted(){
+        int n = 0;
+        for(Hero h:myHeros){
+            if(h.getCurrentState()== Hero.State.IDLE){
+                n++;
+            }
+        }
+        for(Hero h:enemyHeros){
+            if(h.getCurrentState()== Hero.State.IDLE){
+                n++;
+            }
+        }
+        if(n==(myHeros.size()+enemyHeros.size())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     int stop = 0;
@@ -130,13 +148,8 @@ public class WorldController extends InputAdapter implements GestureListener {
     public void update(float deltaTime) {
 //		handleDebugInput(deltaTime);
         updateObjects(deltaTime);
-        if (gameState == PREPAREFIGHT) {
-            //此时不接受任何输入
-            gameState = GameState.FIGHT;
-            /**
-             *逻辑：对所有的敌人和我军按照敏捷进行排序（降序），依次执行
-             *根据攻击范围，如果范围内有多个敌人，随机选择1个进行攻击
-             */
+        //此时不接受任何输入
+        if(gameState == PREPAREFIGHT){
             //TODO: command from net,AI
             for (Hero h : enemyHeros) {
                 int x = h.getMapX() - 1;
@@ -147,7 +160,15 @@ public class WorldController extends InputAdapter implements GestureListener {
                     stop ++;
                 }
             }
-            Gdx.app.debug(TAG,"prepare to fight!");
+            gameState = TO_FIGHT;
+        }
+        //此时不接受任何输入
+        if (gameState == TO_FIGHT && allHerosMoveCompleted()) {
+            Gdx.app.debug(TAG,"to fight!");
+            /**
+             *逻辑：对所有的敌人和我军按照敏捷进行排序（降序），依次执行
+             *根据攻击范围，如果范围内有多个敌人，随机选择1个进行攻击
+             */
             //fighting
             //1.order all heros by dexterity
             List<Hero> temp = new ArrayList<Hero>();
@@ -165,7 +186,6 @@ public class WorldController extends InputAdapter implements GestureListener {
             int len = temp.size();
             TOTLE = len;
             //计数开始
-            int cursor = len;
             for (Hero h : temp) {
                 Hero target = null;
                 if (h.isGood()) {
@@ -180,30 +200,60 @@ public class WorldController extends InputAdapter implements GestureListener {
                 } else {
                     TOTLE--;
                 }
-                cursor--;
-                /*if(target!=null){
-					h.hit(target);
-					Magic m = new Magic(h.getMagicAnimation(),h.getMapX(),h.getMapY());
-					m.MoveTo(target.getMapX(),target.getMapY());
-					magics.add(m);
-				}*/
             }
-//			gameState = GameState.MOVE;
+            gameState = FIGHT;
         }
-        //战斗序列
-        this.command();
+        if(gameState == FIGHT) {
+            //战斗序列
+            this.command();
+        }
+        if(myHeros.isEmpty()){
+            Gdx.app.debug(TAG, " We Lost!");
+            global.setScreen(global.gameoverScreen);
+        }
+        if(enemyHeros.isEmpty()){
+            Gdx.app.debug(TAG, " We Win!");
+            global.setScreen(global.gameoverScreen);
+        }
     }
 
     //战斗序列需要计时器来完成每条command
     private void command() {
         if (!this.roundList.empty()) {
-            Command obj = this.roundList.pop();
-            if (obj != null) {
+            final Command cmd = this.roundList.pop();
+            if (cmd != null) {
+                if (cmd.getTarget().getLife() > 0 && cmd.getRole().getLife() > 0) {
+                    //this.playAttact(cmd.getRole(), cmd.getTarget());
+                    cmd.getRole().setCurrentState(Hero.State.FIGHT);
+                    //0.1秒之后，挨打
+                    Timer.schedule(new Task() {
+                        @Override
+                        public void run() {
+                            cmd.getTarget().setCurrentState(Hero.State.BEATEN);
+                            //0.5秒之后，next command
+                            Timer.schedule(new Task() {
+                                @Override
+                                public void run() {
+                                    //真正的攻击
+                                    cmd.getRole().hit(cmd.getTarget());
+                                    //目标死亡,移除列表和地图，播放死亡动画
+                                    Hero role = cmd.getRole();
+                                    Hero target = cmd.getTarget();
+                                    if(target.getLife()<=0){
+                                        if (role.isGood()) {
+                                            enemyHeros.remove(target);
+                                        }else{
+                                            myHeros.remove(target);
+                                        }
+                                        Gdx.app.debug(TAG,  cmd.getTarget().getId()+ " dead");
+                                    }
+                                    TOTLE--;
+                                    command();//执行下一条指令
+                                }
+                            },1f);
+                        }
+                    },0.1f);
 
-                if (obj.getTarget().getLife() > 0 && obj.getRole().getLife() > 0) {
-                    //this.playAttact(obj.getRole(), obj.getTarget());
-                    obj.getRole().hit(obj.getTarget());
-                    Gdx.app.debug(TAG, obj.getRole().getId() + " hit" + obj.getTarget().getId());
                 } else {
                     TOTLE--;
                     this.command();//执行下一条指令
@@ -279,6 +329,10 @@ public class WorldController extends InputAdapter implements GestureListener {
 
     @Override
     public boolean touchDown(float screenX, float screenY, int pointer, int button) {
+        if (gameState ==PREPAREFIGHT|| gameState == TO_FIGHT ||gameState == FIGHT) {
+            //此时不接受任何输入
+            return true;
+        }
         int x1 = Gdx.input.getX();
         int y1 = Gdx.input.getY();
         Vector3 input = new Vector3(x1, y1, 0);
@@ -289,6 +343,10 @@ public class WorldController extends InputAdapter implements GestureListener {
 //		 Gdx.app.debug(TAG, "clicked # (" +Transform.mouseInMapX(input.x)+","+ Transform.mouseInMapY(input.y)+ " )");
         //Now you can use input.x and input.y, as opposed to x1 and y1, to determine if the moving
         //sprite has been clicked
+        //如果点击的是我方，
+        // 1.如果当前是准备阶段，而且moveCells是空，初始化moveCells。如果moveCells不是空，看点击点有没有hero，如果有，标记为prepare，如果没有，。none。如果点击点是moveCell，看看有没有prepareHero，如果有，移动过去。
+        // a，如果没有选择要移动的英雄
+        // b，如果已经选择了要移动的英雄，点击移动的位置就移动到该位置
         if (gameState == GameState.PREPARE && selectedHeroForPrepare != null) {
             for (Sprite m : moveCells) {
                 if (m.getBoundingRectangle().contains(input.x, input.y)) {
@@ -355,7 +413,7 @@ public class WorldController extends InputAdapter implements GestureListener {
                 h.setSelected(false);
             }
         }
-
+        //如果点击enemy，显示敌人的攻击范围
         for (int i = 0; i < enemyHeros.size(); i++) {
             Hero h = enemyHeros.get(i);
             if (h.getBoundingRectangle().contains(input.x, input.y)) {
@@ -396,6 +454,10 @@ public class WorldController extends InputAdapter implements GestureListener {
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
+        if (gameState ==PREPAREFIGHT|| gameState == TO_FIGHT ||gameState == FIGHT) {
+            //不接受任何输入
+            return true;
+        }
         Gdx.app.log("GestureDetectorTest", "fling " + velocityX + ", " + velocityY);
         if (gameState == GameState.MOVE) {
             if (velocityX > 1000) {
