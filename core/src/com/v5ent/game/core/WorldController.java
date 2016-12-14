@@ -71,7 +71,7 @@ public class WorldController extends InputAdapter implements GestureListener {
         init();
     }
 
-    private void init() {
+    public void init() {
         Gdx.input.setInputProcessor(this);
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
         camera.position.set(0, 0, 0);
@@ -227,20 +227,22 @@ public class WorldController extends InputAdapter implements GestureListener {
                 target = cmd.getTarget();
 
                 if (role.getLife() > 0 && target.getLife() > 0) {
-                    //this.playAttact(cmd.getRole(), cmd.getTarget());
+                    //攻击姿势;
                     role.setCurrentState(Hero.State.FIGHT);
+                    //刀光剑影
+                    Magic m = new Magic(role.getMagicAnimation(),role.getMapX(),role.getMapY());
+                    if(role.getX()<=target.getX()){
+                        m.setCurrentDir(Magic.Direction.RIGHT);
+                    }else{
+                        m.setCurrentDir(Magic.Direction.LEFT);
+                    }
+                    m.moveTo(target.getMapX(),target.getMapY());
+                    magics.add(m);
                     //0.1秒之后，挨打
                     Timer.schedule(new Task() {
                         @Override
                         public void run() {
-                            Magic m = new Magic(role.getMagicAnimation(),target.getMapX(),target.getMapY());
-                            if(role.getX()<=target.getX()){
-                                m.setCurrentDir(Magic.Direction.RIGHT);
-                            }else{
-                                m.setCurrentDir(Magic.Direction.LEFT);
-                            }
-//                            m.moveTo(target.getMapX(),target.getMapY());
-                            magics.add(m);
+                            //挨打
                             target.setCurrentState(Hero.State.BEATEN);
                             //0.5秒之后，next command
                             Timer.schedule(new Task() {

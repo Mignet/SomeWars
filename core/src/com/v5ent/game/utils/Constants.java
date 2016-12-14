@@ -2,6 +2,13 @@ package com.v5ent.game.utils;
 
 
 public class Constants {
+
+	// Visible game world is 16 meters wide
+	public static final float GAME_WIDTH = 1136.0f;//1136/71
+
+	// Visible game world is 9 meters tall
+	public static final float GAME_HEIGHT = 640.0f;//640/71
+
 	//1136 x 640
 	// Visible game world is 16 meters wide
 	public static final float VIEWPORT_WIDTH = 16.0f;//1136/71
@@ -10,8 +17,8 @@ public class Constants {
 	public static final float VIEWPORT_HEIGHT = 9.0f;//640/71
 	
 	//屏幕比率
-	public static float RV_W_RATIO= 1136f/VIEWPORT_WIDTH;// 71
-	public static float RV_H_RATIO = 640f/VIEWPORT_HEIGHT;// 71
+	public static float RV_W_RATIO= GAME_WIDTH/VIEWPORT_WIDTH;// 71
+	public static float RV_H_RATIO = GAME_HEIGHT/VIEWPORT_HEIGHT;// 71
 	// Cell is 5 meters wide
 	public static final float CELL_WIDTH = 140.f/RV_W_RATIO;
 	// Cell is 5 meters tall

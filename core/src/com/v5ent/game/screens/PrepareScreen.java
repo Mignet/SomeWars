@@ -32,13 +32,15 @@ public class PrepareScreen implements Screen {
 	private static final String TAG = PrepareScreen.class.getName();
 	private SomeWars gameIns;
 	private Stage stage;
+	private Table rightTable;
+	private Skin skin;
 
 	public PrepareScreen(SomeWars game) {
 		gameIns = game;
-		ExtendViewport viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		ExtendViewport viewport = new ExtendViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
 		stage = new Stage(viewport);
 		stage.addActor(new Image(Assets.instance.background));
-		Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		Gdx.input.setInputProcessor(stage);
 		// Gdx.graphics.setVSync(false);
 		Table container = new Table();
@@ -46,39 +48,17 @@ public class PrepareScreen implements Screen {
 		stage.addActor(container);
 		container.setFillParent(true);
 
-		Table rightTable = new Table();
+		rightTable = new Table();
 //        rightTable.debug();
 //        rightTable.setFillParent(true);
 		final ScrollPane scroll = new ScrollPane(rightTable, skin);
 //        table.pad(10).defaults().right().space(4);
-		//TODO:从数据库获取
-//		myHeros.add(new Hero("001"));
-//		myHeros.add(new Hero("002"));
-		for (int i = 1; i < 10; i++) {
-			rightTable.row();
-			final Card checkBox = new Card("00"+i, skin);
-			checkBox.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					if (checkBox.isChecked()) {
-						Gdx.app.log(TAG,actor.getUserObject()+ " is checked");
-						gameIns.myHeros.put(actor.getUserObject().toString(),new Hero(actor.getUserObject().toString()));
-					} else {
-						gameIns.myHeros.remove(actor.getUserObject().toString());
-						Gdx.app.log(TAG, actor.getUserObject()+ " is unchecked");
-					}
-					Gdx.app.debug(TAG,"gameIns.myHeros:"+gameIns.myHeros);
-				}
-			});
-			rightTable.add(checkBox).width(196f).height(250f);
-			rightTable.add(new Label(i + " some desciption, every hero has desciption", skin));
-		}
+		initCards();
 		Table bottomTable = new Table();
-		TextButton startButton = new TextButton("开始", Assets.instance.STATUSUI_SKIN);
-		bottomTable.setHeight(startButton.getHeight());
-		bottomTable.setWidth(Gdx.graphics.getWidth());
-		bottomTable.center();
-		bottomTable.add(startButton).padBottom(120);
+		TextButton startButton = new TextButton("开始战斗", Assets.instance.STATUSUI_SKIN);
+		bottomTable.setFillParent(true);
+		bottomTable.row();
+		bottomTable.add(startButton).padTop(stage.getHeight()-40);
 		stage.addActor(bottomTable);
 		startButton.addListener(new ClickListener() {
 									@Override
@@ -99,6 +79,31 @@ public class PrepareScreen implements Screen {
 //      container.add(onTopButton);
 //      container.add(smoothButton);
 		//container.add(fadeButton).left().expandX();
+	}
+	private void initCards(){
+		//TODO:从数据库获取
+//		myHeros.add(new Hero("001"));
+//		myHeros.add(new Hero("002"));
+		rightTable.clear();
+		for (int i = 1; i < 10; i++) {
+			rightTable.row();
+			final Card card = new Card("00"+i, skin);
+			card.addListener(new ChangeListener() {
+				@Override
+				public void changed(ChangeEvent event, Actor actor) {
+					if (card.isChecked()) {
+						Gdx.app.log(TAG,actor.getUserObject()+ " is checked");
+						gameIns.myHeros.put(actor.getUserObject().toString(),new Hero(actor.getUserObject().toString()));
+					} else {
+						gameIns.myHeros.remove(actor.getUserObject().toString());
+						Gdx.app.log(TAG, actor.getUserObject()+ " is unchecked");
+					}
+					Gdx.app.debug(TAG,"gameIns.myHeros:"+gameIns.myHeros);
+				}
+			});
+			rightTable.add(card).width(196f).height(250f);
+			rightTable.add(new Label(i + " some desciption, every hero has desciption", skin));
+		}
 	}
 	private String padZero(int n) {
 		if(n<10){
@@ -133,6 +138,7 @@ public class PrepareScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
+		initCards();
 	}
 
 	@Override

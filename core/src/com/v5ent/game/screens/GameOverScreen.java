@@ -14,8 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.v5ent.game.SomeWars;
 import com.v5ent.game.core.Assets;
+import com.v5ent.game.utils.Constants;
 
 public class GameOverScreen implements Screen {
     private Stage _stage;
@@ -27,10 +29,12 @@ public class GameOverScreen implements Screen {
         _game = game;
 
         //create
-        _stage = new Stage();
+        ExtendViewport viewport = new ExtendViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
+        _stage = new Stage(viewport);
     	// + Background
-//        Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/gameover.jpg")));
-//        _stage.addActor(imgBackground);
+        Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/gameover.jpg")));
+        imgBackground.setSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
+        _stage.addActor(imgBackground);
         Texture tex = new Texture(Gdx.files.internal("menus/gameover-button.png"));       
 		TextureRegion[][] tmp = TextureRegion.split(tex, 112, 43);
 //		ImageButton continueButton = new  ImageButton(new TextureRegionDrawable(tmp[0][0]), new TextureRegionDrawable(tmp[0][1]));

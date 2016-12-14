@@ -33,11 +33,11 @@ public class LoginGameScreen implements Screen {
 		gameIns = game;
 
 		//create
-		ExtendViewport viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		ExtendViewport viewport = new ExtendViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
 		stage = new Stage(viewport);
 		// + Background
         Image imgBackground = new Image(new Texture(Gdx.files.internal("menus/welcome.jpg")));
-        imgBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        imgBackground.setSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         stage.addActor(imgBackground);
 		Texture tex = new Texture(Gdx.files.internal("menus/new-button.png"));       
 		TextureRegion[][] tmp = TextureRegion.split(tex, 112, 43);
@@ -70,7 +70,7 @@ public class LoginGameScreen implements Screen {
 			}
 		});*/
 
-		TextButton startButton = new TextButton("开始", Assets.instance.STATUSUI_SKIN);
+		TextButton startButton = new TextButton("进入游戏", Assets.instance.STATUSUI_SKIN);
 //		TextButton backButton = new TextButton("返回", Assets.instance.STATUSUI_SKIN);
 
 		//Layout
@@ -83,14 +83,14 @@ public class LoginGameScreen implements Screen {
 		topTable.add(password).center();
 
 		Table bottomTable = new Table();
-		bottomTable.setHeight(startButton.getHeight());
-		bottomTable.setWidth(Gdx.graphics.getWidth());
-		bottomTable.center();
-		bottomTable.add(startButton).padBottom(120);
+		bottomTable.setFillParent(true);
+		bottomTable.row();
+		bottomTable.add(startButton).padTop(stage.getHeight()-40);
 //		bottomTable.add(backButton);
 
 		stage.addActor(topTable);
 		stage.addActor(bottomTable);
+//		stage.setDebugAll(true);
 
 		startButton.addListener(new ClickListener() {
 
