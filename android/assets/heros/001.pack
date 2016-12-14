@@ -128,6 +128,13 @@ beatenRight0
   orig: 200, 200
   offset: 48, 31
   index: -1
+fightRight6
+  rotate: false
+  xy: 98, 296
+  size: 98, 98
+  orig: 200, 200
+  offset: 52, 31
+  index: -1
 fightRight2
   rotate: false
   xy: 2, 370

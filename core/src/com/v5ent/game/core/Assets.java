@@ -70,7 +70,7 @@ public class Assets implements Disposable, AssetErrorListener {
 			}
 			walkRightAnimation = new Animation(0.1f, walkRightFrames, Animation.PlayMode.LOOP);
 			Array<TextureRegion> fightRightFrames = new Array<TextureRegion>(6);
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 7; i++) {
 				fightRightFrames.insert(i, atlas.findRegion("fightRight"+i));
 			}
 			fightRightAnimation = new Animation(0.05f, fightRightFrames, Animation.PlayMode.NORMAL);
@@ -104,7 +104,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		font = new BitmapFont(Gdx.files.internal("data/num.fnt"));
 		STATUSUI_SKIN = new Skin(Gdx.files.internal("skins/statusui.json"));
 		//TODO:当前提供的所有英雄
-		int heroCnt = 1;
+		int heroCnt = 2;
 		//look all hero's pack
 		for(int i=1;i<=heroCnt ;i++){
 			assetManager.load("heros/00"+i+".pack", TextureAtlas.class);
