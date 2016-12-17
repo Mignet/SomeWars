@@ -65,7 +65,7 @@ public class Hero extends Sprite{
 	private Direction currentDir = Direction.RIGHT;
 	private Vector2 nextPosition;
 	/** 速度 */
-	private float speed = 1f;//一格一秒
+	private float speed = 1.6f;//一格一秒有点慢
 	//LVL - The tile's level. The tiles level up when it gain some experience.
 	private int	level = 1;
 	//STR - The tile's Strength. Strength affects the damages.
@@ -110,14 +110,35 @@ public class Hero extends Sprite{
 		this.setOrigin(this.getWidth() / 2.0f, 0);
 		nextPosition = new Vector2(this.getX(),this.getY());
 		good = true;
-		moveRange.add(new Vector2(0,1));
-		moveRange.add(new Vector2(0,-1));
-		moveRange.add(new Vector2(1,0));
-		moveRange.add(new Vector2(-1,0));
-		fightRange.add(new Vector2(0,1));
-		fightRange.add(new Vector2(0,-1));
-		fightRange.add(new Vector2(1,0));
-		fightRange.add(new Vector2(-1,0));
+		//TODO:from db
+		if("001".equals(id)) {
+			moveRange.add(new Vector2(0, 1));
+			moveRange.add(new Vector2(0, -1));
+			moveRange.add(new Vector2(1, 0));
+			moveRange.add(new Vector2(-1, 0));
+			fightRange.add(new Vector2(0, 1));
+			fightRange.add(new Vector2(0, -1));
+			fightRange.add(new Vector2(1, 0));
+			fightRange.add(new Vector2(-1, 0));
+		}
+		if("002".equals(id)) {
+			moveRange.add(new Vector2(0, 1));
+			moveRange.add(new Vector2(0, -1));
+			moveRange.add(new Vector2(1, 1));
+			moveRange.add(new Vector2(1, -1));
+			moveRange.add(new Vector2(-1, -1));
+			moveRange.add(new Vector2(-1, 1));
+			moveRange.add(new Vector2(1, 0));
+			moveRange.add(new Vector2(-1, 0));
+			fightRange.add(new Vector2(0, 1));
+			fightRange.add(new Vector2(0, -1));
+			fightRange.add(new Vector2(1, 1));
+			fightRange.add(new Vector2(1, -1));
+			fightRange.add(new Vector2(-1, -1));
+			fightRange.add(new Vector2(-1, 1));
+			fightRange.add(new Vector2(1, 0));
+			fightRange.add(new Vector2(-1, 0));
+		}
 	}
 	float elapsed = 0.01f;
 	/** 需要移动到的目标位置**/
@@ -194,17 +215,9 @@ public class Hero extends Sprite{
 			break;
 		case FIGHT:
 			currentFrame = fightRightAnimation.getKeyFrame(frameTime);
-			/*if(fightRightAnimation.isAnimationFinished(frameTime)){
-				Gdx.app.debug(TAG,"fightRightAnimation.isAnimationFinished");
-				currentState = State.IDLE;
-			}*/
 			break;
 		case BEATEN:
 			currentFrame = beatenRightAnimation.getKeyFrame(frameTime);
-			/*if(beatenRightAnimation.isAnimationFinished(frameTime)){
-				Gdx.app.debug(TAG,"beatenRightAnimation.isAnimationFinished");
-				currentState = State.IDLE;
-			}*/
 			break;
 		default:
 			currentFrame = idleRightAnimation.getKeyFrame(frameTime);
@@ -216,7 +229,7 @@ public class Hero extends Sprite{
 		setPosition(nextPosition.x, nextPosition.y);
 	}
 
-	public void calculateNextPosition(float deltaTime) {
+	/*public void calculateNextPosition(float deltaTime) {
 		float testX = this.getX();
 		float testY = this.getY();
 		speed *=(deltaTime);
@@ -238,6 +251,17 @@ public class Hero extends Sprite{
 		}
 		nextPosition.x = testX;
 		nextPosition.y = testY;
+//		Gdx.app.debug(TAG, "nextPosition:"+nextPosition);
+		// velocity
+		speed *=(1 / deltaTime);
+	}*/
+	public void calculateNextPosition(float deltaTime) {
+		float testX = this.getX();
+		float testY = this.getY();
+		speed *= (deltaTime);
+		Vector2 v = new Vector2(targetX-testX,targetY-testY).nor();
+		nextPosition.x = testX + v.x*speed;
+		nextPosition.y = testY + v.y*speed;
 //		Gdx.app.debug(TAG, "nextPosition:"+nextPosition);
 		// velocity
 		speed *=(1 / deltaTime);

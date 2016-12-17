@@ -42,7 +42,7 @@ public class Magic extends Sprite {
     public Magic(Animation m,int x, int y){
         magicAnimation = m;
         currentFrame = m.getKeyFrame(0);
-        this.setSize(currentFrame.getRegionWidth()/ Constants.RV_W_RATIO, currentFrame.getRegionHeight()*4/Constants.RV_H_RATIO);
+        this.setSize(currentFrame.getRegionWidth()/ Constants.RV_W_RATIO, currentFrame.getRegionHeight()*2/Constants.RV_H_RATIO);
         // Set origin to sprite's center
 //        this.setOrigin(this.getWidth() / 2.0f, 0);
         mapX = x;
@@ -72,7 +72,7 @@ public class Magic extends Sprite {
         setPosition(nextPosition.x, nextPosition.y);
     }
     /** 速度 */
-    private float speed = 4f;//4格一秒
+    private float speed = 5f;//4格一秒
     private Vector2 nextPosition;
     public void calculateNextPosition(float deltaTime) {
         float testX = this.getX();

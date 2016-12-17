@@ -12,6 +12,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Timer;
@@ -102,7 +103,7 @@ public class WorldController extends InputAdapter implements GestureListener {
 //			create hero by id
             Hero spr = myHeros.get(i);
             // Calculate random position for sprite
-            spr.setMapPosition(1, i + 1);
+            spr.setMapPosition(1, 3-i );
             spr.setGood(true);
         }
         //init blocks
@@ -113,12 +114,12 @@ public class WorldController extends InputAdapter implements GestureListener {
         int enemyHerosCnt = 2;
         // Create a list of texture regions
         // Create new sprites using a random texture region
-        for (int i = 0; i < enemyHerosCnt; i++) {
+        for (int i = 1; i <= enemyHerosCnt; i++) {
 //			create hero by id
-            Hero spr = new Hero("001");
+            Hero spr = new Hero("00"+i);
             spr.setGood(false);
             // Calculate random position for sprite
-            spr.setMapPosition(Constants.MAP_COLS - 1 - i, 3);
+            spr.setMapPosition(Constants.MAP_COLS - 3 + i, 3);
             // Put new sprite into array
             enemyHeros.add(spr);
         }
@@ -155,9 +156,7 @@ public class WorldController extends InputAdapter implements GestureListener {
                 int y = h.getMapY();
                 if (!isCollisionWithBlock(x, y) && !isCollisionWithHeros(x, y) && x >= 0 && y >= 0 && x < 7 && y < 5 /*&& stop<2*/) {
                     h.moveTo(x, y);
-                } /*else {
-                    stop ++;
-                }*/
+                }
             }
             gameState = TO_FIGHT;
         }
@@ -209,7 +208,7 @@ public class WorldController extends InputAdapter implements GestureListener {
         }
         if(enemyHeros.isEmpty()){
             Gdx.app.debug(TAG, " We Win!");
-            global.setScreen(global.gameoverScreen);
+            global.setScreen(global.prepareScreen);
         }
     }
     Hero role,target;
@@ -273,22 +272,10 @@ public class WorldController extends InputAdapter implements GestureListener {
             }
         } else {
             //所有战斗结束
-//            if (TOTLE != -1) {
                 gameState = GameState.MOVE;
-//            }
         }
     }
 
-    /**
-     * 攻击者特效
-     */
-	/*private void playAttact(Hero role,Hero target) {
-		var action1 = cc.TintBy.create(0.1, -127, -255, -127);
-		var action1Back = action1.reverse();
-		var action2 = cc.MoveBy.create(0.1, cc.ccp((target.x - role.x) * 25, (-target.y + role.y) * 25));
-		var action2Back = action2.reverse();
-		role.runAction(cc.Sequence.create(action1, action1Back, action1, action1Back, action1, action1Back, action2, action2Back, cc.CallFunc.create(this, this.playEffectAt, target)));
-	}*/
     //blocks + heros
     private boolean isCollisionWithBlock(int x, int y) {
         for (Block b : blocks) {
@@ -364,6 +351,14 @@ public class WorldController extends InputAdapter implements GestureListener {
         // a，如果没有选择要移动的英雄
         // b，如果已经选择了要移动的英雄，点击移动的位置就移动到该位置
         if (gameState == GameState.PREPARE && selectedHeroForPrepare != null) {
+            for (int i = 0; i < myHeros.size(); i++) {
+                Hero h = myHeros.get(i);
+                Rectangle box = new Rectangle(h.getX(), h.getY(), Constants.CELL_WIDTH, Constants.CELL_HEIGHT);
+                if (box.contains(input.x, input.y)) {
+                    Gdx.app.debug(TAG,"there is a Hero in this cell!");
+                    return false;
+                }
+            }
             for (Sprite m : moveCells) {
                 if (m.getBoundingRectangle().contains(input.x, input.y)) {
                     selectedHeroForPrepare.setMapPosition(Transform.mouseInMapX(input.x), Transform.mouseInMapY(input.y));
@@ -396,7 +391,8 @@ public class WorldController extends InputAdapter implements GestureListener {
         fightCells.clear();
         for (int i = 0; i < myHeros.size(); i++) {
             Hero h = myHeros.get(i);
-            if (h.getBoundingRectangle().contains(input.x, input.y)) {
+            Rectangle box = new Rectangle(h.getX(),h.getY(),Constants.CELL_WIDTH,Constants.CELL_HEIGHT);
+            if (box.contains(input.x, input.y)) {
                 Gdx.app.debug(TAG, " # (Sprite #"+h.getId()+"(" + h.getMapX()+","+h.getMapY() + ") clicked)");
                 h.setSelected(true);
                 if (gameState == GameState.PREPARE) {
@@ -432,7 +428,8 @@ public class WorldController extends InputAdapter implements GestureListener {
         //如果点击enemy，显示敌人的攻击范围
         for (int i = 0; i < enemyHeros.size(); i++) {
             Hero h = enemyHeros.get(i);
-            if (h.getBoundingRectangle().contains(input.x, input.y)) {
+            Rectangle box = new Rectangle(h.getX(),h.getY(),Constants.CELL_WIDTH,Constants.CELL_HEIGHT);
+            if (box.contains(input.x, input.y)) {
                 Gdx.app.debug(TAG, " # (Enemy Sprite #" + i + " clicked)");
                 h.setSelected(true);
                 for (Vector2 p : h.getFightRange()) {

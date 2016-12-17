@@ -63,7 +63,7 @@ public class Assets implements Disposable, AssetErrorListener {
 			for (int i = 0; i < 6; i++) {
 				idleRightFrames.insert(i, atlas.findRegion("idleRight"+i));
 			}
-			idleRightAnimation = new Animation(0.2f, idleRightFrames, Animation.PlayMode.LOOP);
+			idleRightAnimation = new Animation(0.12f, idleRightFrames, Animation.PlayMode.LOOP);
 			Array<TextureRegion> walkRightFrames = new Array<TextureRegion>(5);
 			for (int i = 0; i < 5; i++) {
 				walkRightFrames.insert(i, atlas.findRegion("walkRight"+i));
@@ -73,7 +73,7 @@ public class Assets implements Disposable, AssetErrorListener {
 			for (int i = 0; i < 7; i++) {
 				fightRightFrames.insert(i, atlas.findRegion("fightRight"+i));
 			}
-			fightRightAnimation = new Animation(0.05f, fightRightFrames, Animation.PlayMode.NORMAL);
+			fightRightAnimation = new Animation(0.06f, fightRightFrames, Animation.PlayMode.NORMAL);
 			Array<TextureRegion> beatenRightFrames = new Array<TextureRegion>(3);
 			for (int i = 0; i < 3; i++) {
 				beatenRightFrames.insert(i, atlas.findRegion("beatenRight"+i));
