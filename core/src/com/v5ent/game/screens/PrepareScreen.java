@@ -68,6 +68,10 @@ public class PrepareScreen implements Screen {
 
 									@Override
 									public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+										if(gameIns.myHeros.size()<=0){
+											Gdx.app.debug(TAG,"你还没有选择出战英雄");
+											return;
+										}
 										gameIns.setScreen(gameIns.mainGameScreen);
 									}
 								}
